@@ -110,7 +110,7 @@ export class SQLiteIndexer {
       db = new Database(dbPath, { readonly: true });
 
       const searchQuery = `
-        SELECT id, title, url, snippet(docs_fts, 3, '<mark>', '</mark>', '...', 64) as snippet,
+        SELECT id, title, url, snippet(docs_fts, 3, '<mark>', '</mark>', '...', 32) as snippet,
                bm25(docs_fts) as score, docset
         FROM docs_fts
         WHERE docs_fts MATCH ?
@@ -129,11 +129,12 @@ export class SQLiteIndexer {
         const score = Math.abs(row.score);
 
         if (!options.minScore || score >= options.minScore) {
+          const cleanSnippet = this.cleanSnippet(row.snippet);
           results.push({
             id: row.id,
             title: row.title,
             url: row.url,
-            snippet: row.snippet.replace(/<\/?mark>/g, '**'),
+            snippet: cleanSnippet,
             score: score,
             docset: row.docset,
           });
@@ -160,6 +161,16 @@ export class SQLiteIndexer {
       .join(' AND ');
 
     return terms || query.trim();
+  }
+
+  private cleanSnippet(snippet: string): string {
+    return snippet
+      .replace(/<\/?mark>/g, '**') // Convert HTML marks to markdown
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .replace(/\.\.\.\s*/g, '... ') // Clean up ellipses
+      .replace(/\*\*\s+/g, '**') // Remove spaces after opening marks
+      .replace(/\s+\*\*/g, '**') // Remove spaces before closing marks
+      .trim();
   }
 
   async removeIndex(docsetName: string): Promise<void> {

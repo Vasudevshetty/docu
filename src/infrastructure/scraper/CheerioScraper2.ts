@@ -85,39 +85,37 @@ export class CheerioScraper {
   private extractCleanText(element: cheerio.Cheerio<any>): string {
     // Get raw text
     let text = element.text();
-    
+
     // Split into sentences and filter good ones
     const sentences = text
       .split(/[.!?]+/)
-      .map(sentence => sentence.trim())
-      .filter(sentence => 
-        sentence.length > 20 && 
-        sentence.length < 300 &&
-        !sentence.toLowerCase().includes('copyright') &&
-        !sentence.toLowerCase().includes('privacy') &&
-        !sentence.toLowerCase().includes('terms of')
+      .map((sentence) => sentence.trim())
+      .filter(
+        (sentence) =>
+          sentence.length > 20 &&
+          sentence.length < 300 &&
+          !sentence.toLowerCase().includes('copyright') &&
+          !sentence.toLowerCase().includes('privacy') &&
+          !sentence.toLowerCase().includes('terms of')
       )
       .slice(0, 4); // Take first 4 good sentences
-    
+
     let result = sentences.join('. ');
     if (result && !result.endsWith('.')) {
       result += '.';
     }
-    
+
     // Fallback to truncated text if no good sentences
     if (!result || result.length < 50) {
-      result = text
-        .replace(/\s+/g, ' ')
-        .trim()
-        .substring(0, 300);
-      
+      result = text.replace(/\s+/g, ' ').trim().substring(0, 300);
+
       // Cut at last complete word
       const lastSpace = result.lastIndexOf(' ');
       if (lastSpace > 150) {
         result = result.substring(0, lastSpace) + '...';
       }
     }
-    
+
     return result.replace(/\s+/g, ' ').trim();
   }
 
