@@ -13,6 +13,32 @@
     }
   },
   {
+    "name": "vue",
+    "description": "Vue.js Documentation",
+    "baseUrl": "https://vuejs.org",
+    "scrapeRules": {
+      "entryPoints": ["https://vuejs.org/guide/", "https://vuejs.org/api/"],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": ".VPContent, main, article",
+        "exclude": "nav, footer, .VPNavBar, .VPSidebar"
+      }
+    }
+  },
+  {
+    "name": "angular",
+    "description": "Angular Documentation",
+    "baseUrl": "https://angular.io",
+    "scrapeRules": {
+      "entryPoints": ["https://angular.io/guide", "https://angular.io/api"],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": ".docs-content, article, main",
+        "exclude": "nav, footer, .docs-toc, .docs-navbar"
+      }
+    }
+  },
+  {
     "name": "nodejs",
     "description": "Node.js Documentation",
     "baseUrl": "https://nodejs.org/api",
@@ -22,6 +48,54 @@
         "title": "h1, h2, h3",
         "content": "#content, .api-docs",
         "exclude": "nav, footer"
+      }
+    }
+  },
+  {
+    "name": "express",
+    "description": "Express.js Documentation",
+    "baseUrl": "https://expressjs.com",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://expressjs.com/en/4x/api.html",
+        "https://expressjs.com/en/guide/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": "#page-doc, .page-content, main",
+        "exclude": "nav, footer, .sidebar"
+      }
+    }
+  },
+  {
+    "name": "typescript",
+    "description": "TypeScript Documentation",
+    "baseUrl": "https://www.typescriptlang.org",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://www.typescriptlang.org/docs/",
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": ".markdown, article, main",
+        "exclude": "nav, footer, .nav-docs"
+      }
+    }
+  },
+  {
+    "name": "docker",
+    "description": "Docker Documentation",
+    "baseUrl": "https://docs.docker.com",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://docs.docker.com/get-started/",
+        "https://docs.docker.com/reference/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": ".container, article, main",
+        "exclude": "nav, footer, .sidebar"
       }
     }
   },
@@ -38,6 +112,38 @@
         "title": "h1, h2, h3",
         "content": ".body, .document",
         "exclude": ".sphinxsidebar, .related"
+      }
+    }
+  },
+  {
+    "name": "django",
+    "description": "Django Documentation",
+    "baseUrl": "https://docs.djangoproject.com",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://docs.djangoproject.com/en/stable/topics/",
+        "https://docs.djangoproject.com/en/stable/ref/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": ".document, .body",
+        "exclude": ".sphinxsidebar, .related"
+      }
+    }
+  },
+  {
+    "name": "fastapi",
+    "description": "FastAPI Documentation",
+    "baseUrl": "https://fastapi.tiangolo.com",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://fastapi.tiangolo.com/tutorial/",
+        "https://fastapi.tiangolo.com/reference/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": ".md-content, article, main",
+        "exclude": "nav, footer, .md-sidebar"
       }
     }
   }

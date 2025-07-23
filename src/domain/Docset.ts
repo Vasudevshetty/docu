@@ -16,6 +16,20 @@ export interface DocsetMetadata {
   totalDocs: number;
 }
 
+export interface DocsetConfig {
+  name: string;
+  description: string;
+  baseUrl: string;
+  scrapeRules: {
+    entryPoints: string[];
+    selectors: {
+      title: string;
+      content: string;
+      exclude: string;
+    };
+  };
+}
+
 export class Docset {
   constructor(
     public name: string,
