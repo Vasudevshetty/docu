@@ -1,87 +1,185 @@
-# 📚 docu-cli – Offline Documentation Search CLI
+# 📚 docu-cli – AI-Powered Offline Documentation CLI
 
-> Blazing-fast, offline-first CLI to fetch, cache, and search developer docs right from your terminal using a clean TypeScript architecture.
+> Blazing-fast, AI-enhanced CLI to fetch, cache, and search developer docs with smart explanations and paginated display - right from your terminal.
 
 ---
 
 ## 🚀 Features
 
-- 📶 Offline access to popular docs (React, Node, Python, Docker, etc.)
-- 🔍 Full-text fuzzy search (SQLite FTS5 or Lunr.js fallback)
-- ⚡ Fast indexed results with highlighted matches
-- 📁 Local cache for each docset
-- 🧱 Class-based modular codebase in TypeScript
-- 🌐 Easily add new frameworks or docsets
-- 🖥️ Optional interactive TUI (Ink)
+### Core Features
+
+- 📶 **Offline-first**: Access popular docs (React, Vue, Angular, Node, Python, Docker, etc.) without internet
+- 🔍 **Smart Search**: Full-text fuzzy search with SQLite FTS5 and BM25 scoring
+- ⚡ **Lightning Fast**: Instant indexed results with highlighted matches
+- 📁 **Local Cache**: Persistent storage for each docset
+- 🧱 **Clean Architecture**: Modular TypeScript codebase with clear separation
+
+### AI-Enhanced Features ✨
+
+- 🤖 **AI Explanations**: Get detailed explanations powered by Groq AI
+- 📖 **Smart Insights**: AI-enhanced search results with contextual guidance
+- 💡 **Quick Reference**: AI-generated syntax examples and best practices
+- � **Intelligent Context**: Search results enhanced with AI understanding
+
+### Display & UX
+
+- 📄 **Paginated Viewer**: Git-like pager for comfortable reading
+- 🎨 **Markdown Rendering**: Beautiful formatted output with syntax highlighting
+- 🌈 **Rich CLI**: Colorized output with emojis and progress indicators
+- � **Multiple Formats**: JSON, Markdown, Plain text, and Table outputs
 
 ---
 
 ## 🎯 Use Cases
 
-- 💻 Develop anywhere without internet
-- 🚀 Speed up dev workflows with instant docs
-- 📦 Embed CLI into local dev containers
-- 🔍 Create a personal offline doc archive
+- 💻 **Offline Development**: Code anywhere without internet dependency
+- 🚀 **Productivity Boost**: Instant access to docs with AI explanations
+- 📦 **DevOps Integration**: Embed in containers and development environments
+- 🎓 **Learning Enhancement**: AI-powered explanations for complex concepts
+- 🔍 **Knowledge Base**: Personal offline documentation archive with smart search
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Layer              | Tech Stack                              |
-|-------------------|------------------------------------------|
-| Language           | **TypeScript**                          |
-| CLI Framework      | `commander`, `yargs`                    |
-| TUI (Optional)     | `ink`, `blessed`                        |
-| Web Scraping       | `axios`, `cheerio`, `playwright`        |
-| Search Engine      | `SQLite + FTS5`, fallback: `Lunr.js`    |
-| DB Driver          | `better-sqlite3` or `sqlite3`           |
-| Packaging          | `pkg`, `esbuild`, `npx`                 |
-| Storage Location   | `~/.docu/` (cross-platform local data)  |
+| Layer            | Tech Stack                             |
+| ---------------- | -------------------------------------- |
+| Language         | **TypeScript**                         |
+| CLI Framework    | `commander`, `yargs`                   |
+| TUI (Optional)   | `ink`, `blessed`                       |
+| Web Scraping     | `axios`, `cheerio`, `playwright`       |
+| Search Engine    | `SQLite + FTS5`, fallback: `Lunr.js`   |
+| DB Driver        | `better-sqlite3` or `sqlite3`          |
+| Packaging        | `pkg`, `esbuild`, `npx`                |
+| Storage Location | `~/.docu/` (cross-platform local data) |
 
 ---
 
-## 🧠 Implementation Plan
+## � AI Integration
+
+### Setting Up Groq AI
+
+1. Get your free API key from [Groq Console](https://console.groq.com/)
+2. Create a `.env` file in your project:
+
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Add your API key
+GROQ_API_KEY=your_api_key_here
+```
+
+### AI Features
+
+- **Smart Explanations**: `docu explain useState --simple`
+- **Enhanced Search**: `docu search "react hooks" --ai`
+- **Quick Reference**: `docu quick "useEffect" --ai`
+- **Paginated Display**: `docu search "typescript" --pager`
+
+---
+
+## 📖 Usage Examples
+
+### Basic Search
+
+```bash
+# Simple search
+docu search "useState hook"
+
+# Search with AI insights
+docu search "react lifecycle" --ai
+
+# Paginated results (like git log)
+docu search "typescript generics" --pager
+```
+
+### AI Explanations
+
+```bash
+# Get detailed explanation
+docu explain "useEffect"
+
+# Simple explanation for beginners
+docu explain "async await" --simple
+
+# With code examples
+docu explain "useState" --examples --pager
+```
+
+### Quick Reference
+
+```bash
+# Quick syntax lookup
+docu quick "array methods"
+
+# AI-powered quick reference
+docu quick "promises" --ai
+```
+
+---
+
+## �🧠 Implementation Plan
 
 ### 🏗️ 1. Project Setup
+
 - Scaffold project using TypeScript
 - Setup `tsconfig`, linting, prettier, ESModules
 - Setup folder structure based on clean architecture
 
-### 🧪 2. CLI Interface
-- Use `commander` to define:
-  - `docu fetch <docset>`
-  - `docu search <query>`
-  - `docu list`
-  - `docu remove <docset>`
+### 🧪 2. CLI Interface ✅
 
-### 📥 3. Fetch & Normalize Docs
-- Use scrapers to extract:
-  - Titles, headings, paragraphs
-- Normalize and save to: `~/.docu/<docset>/`
-- Save metadata like version, updated date
+Core commands implemented:
 
-### 📊 4. Indexing Engine
-- Tokenize content using full-text search rules
-- Index using SQLite FTS5 or fallback to Lunr
-- Store in: `~/.docu/index/<docset>.db`
+- `docu fetch <docset>` - Download and cache documentation
+- `docu search <query>` - Search with AI insights and pagination
+- `docu list` - Show installed docsets
+- `docu remove <docset>` - Delete cached documentation
+- `docu explain <query>` - AI-powered explanations
+- `docu quick <query>` - Quick reference with AI
+- `docu copy <query>` - Copy code examples
+- `docu update` - Update cached content
+- `docu interactive` - Interactive search mode
+- `docu available` - Browse available docsets
 
-### 🔎 5. Fuzzy Search
-- Perform ranked search on indexed content
-- CLI output: matched title + snippet
-- Optional: use Ink for preview-based TUI mode
+### 📥 3. Fetch & Normalize Docs ✅
 
-### 📦 6. Docset Management
-- `list`: show installed docsets
-- `remove`: delete cached files and index
-- `sync`: update if connected to internet
+- Enhanced Cheerio scraper with markdown extraction
+- Clean content filtering and structure preservation
+- Metadata storage with version tracking
+- 10 popular docsets: React, Vue, Angular, Node.js, Express, TypeScript, Docker, Python, Django, FastAPI
 
-### 🚀 7. Packaging
-- Bundle into a single binary with `pkg`
-- Publish to `npm` with `npx` support
+### 📊 4. Indexing Engine ✅
+
+- SQLite FTS5 full-text search with BM25 scoring
+- Optimized tokenization and ranking
+- Persistent storage in `~/.docu/index/<docset>.db`
+
+### 🔎 5. Enhanced Search ✅
+
+- Multi-format output (table, JSON, markdown, plain)
+- AI-enhanced results with Groq integration
+- Paginated display with navigation controls
+- Syntax highlighting and emoji indicators
+
+### 🤖 6. AI Integration ✅
+
+- Groq LLM integration for smart explanations
+- Context-aware responses using search results
+- Fallback mechanisms for offline usage
+- Environment-based configuration
+
+### � 7. Advanced Features ✅
+
+- Interactive TUI mode with real-time search
+- Export functionality for search results
+- Global npm installation support
+- Cross-platform compatibility
 
 ---
 
 ## 🗂️ Folder Structure (Clean Architecture)
+
 ```bash
 docu-cli/
 ├── bin/
@@ -113,7 +211,7 @@ docu-cli/
 │   └── index/
 ├── tsconfig.json
 └── README.md
-````
+```
 
 ---
 
@@ -137,30 +235,30 @@ docu remove nodejs
 
 ## 🌱 Future Enhancements
 
-* 🔎 AI-powered summary: `docu explain useEffect`
-* 💡 VS Code Extension: inline doc search
-* 📄 Export results/snippets to PDF
-* 🔖 Bookmarks and annotations
-* 📤 Share docsets with team over LAN
-* 🔄 Automatic background updates
+- 🔎 AI-powered summary: `docu explain useEffect`
+- 💡 VS Code Extension: inline doc search
+- 📄 Export results/snippets to PDF
+- 🔖 Bookmarks and annotations
+- 📤 Share docsets with team over LAN
+- 🔄 Automatic background updates
 
 ---
 
 ## 🤖 Contribution Guidelines
 
-* Maintain SOLID principles
-* Follow clean architecture folder layout
-* Add tests using `jest`
-* Open issues before large changes
+- Maintain SOLID principles
+- Follow clean architecture folder layout
+- Add tests using `jest`
+- Open issues before large changes
 
 ---
 
 ## 📦 Packaging & Distribution
 
-* Build: `npm run build`
-* Package: `pkg .`
-* Install globally: `npm i -g .`
-* Publish: `npm publish`
+- Build: `npm run build`
+- Package: `pkg .`
+- Install globally: `npm i -g .`
+- Publish: `npm publish`
 
 ---
 
@@ -181,8 +279,8 @@ test('should fetch and index React docs', async () => {
 
 ## 📌 Notes
 
-* SQLite is preferred for long-term performance
-* Modular scrapers support Markdown/HTML/JSON docs
-* You can build your own docset with simple config
+- SQLite is preferred for long-term performance
+- Modular scrapers support Markdown/HTML/JSON docs
+- You can build your own docset with simple config
 
 ---

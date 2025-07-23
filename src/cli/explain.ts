@@ -1,6 +1,9 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { SearchDocs } from '../core/SearchDocs';
+import { GroqService } from '../services/GroqService';
+import { MarkdownPager } from '../utils/MarkdownPager';
+import ora from 'ora';
 
 export const explainCommand = new Command('explain')
   .description('Get AI-powered explanations and code examples')
@@ -8,6 +11,7 @@ export const explainCommand = new Command('explain')
   .option('-d, --docset <docset>', 'Limit search to specific docset')
   .option('--examples', 'Include code examples')
   .option('--simple', 'Simple explanation for beginners')
+  .option('--pager', 'Display explanation in a paginated viewer')
   .action(
     async (
       query: string,
@@ -15,10 +19,11 @@ export const explainCommand = new Command('explain')
         docset?: string;
         examples?: boolean;
         simple?: boolean;
+        pager?: boolean;
       }
     ) => {
       try {
-        console.log(chalk.blue(`🤖 Explaining "${query}"...\n`));
+        const spinner = ora(`Explaining "${query}"...`).start();
 
         // First, search for relevant documentation
         const searcher = new SearchDocs();
@@ -27,37 +32,68 @@ export const explainCommand = new Command('explain')
           limit: 3,
         });
 
-        if (results.length === 0) {
-          console.log(chalk.yellow(`No documentation found for "${query}"`));
-          console.log(
-            chalk.gray('Try fetching more docsets or check spelling.')
+        // Generate AI explanation using Groq
+        let explanation = '';
+        try {
+          const groq = GroqService.fromEnv();
+
+          // Prepare context from search results
+          const context = results
+            .map((r) => `${r.title}: ${r.snippet}`)
+            .join('\n\n');
+
+          // Create a comprehensive prompt
+          const prompt = options.simple
+            ? `Explain "${query}" in simple terms for beginners.`
+            : `Provide a detailed technical explanation of "${query}".`;
+
+          explanation = await groq.explainCode(
+            query,
+            context + '\n\n' + prompt
           );
-          return;
+          spinner.succeed('AI explanation generated');
+        } catch (error) {
+          spinner.fail('AI explanation failed');
+          console.log(
+            chalk.yellow('⚠️  AI explanation unavailable:'),
+            error instanceof Error ? error.message : String(error)
+          );
+
+          // Fallback to documentation-based explanation
+          explanation = generateFallbackExplanation(
+            query,
+            results,
+            options.simple
+          );
         }
 
-        // Generate AI explanation (placeholder for now)
-        console.log(chalk.bold.green('📚 Quick Explanation:'));
-        console.log(generateExplanation(query, results, options.simple));
+        // Format output
+        let output = `# Explanation: ${query}\n\n`;
+        output += `${explanation}\n\n`;
 
         if (options.examples) {
-          console.log(chalk.bold.blue('\n💻 Code Examples:'));
-          console.log(generateCodeExamples(query));
+          output += `## 💻 Code Examples\n\n`;
+          output += generateCodeExamples(query) + '\n\n';
         }
 
-        console.log(chalk.bold.cyan('\n🔗 Related Documentation:'));
-        results.slice(0, 2).forEach((result, index) => {
-          console.log(chalk.gray(`${index + 1}. ${result.title}`));
-          console.log(chalk.blue(`   ${result.url}`));
-        });
+        if (results.length > 0) {
+          output += `## 🔗 Related Documentation\n\n`;
+          results.slice(0, 2).forEach((result, index) => {
+            output += `${index + 1}. **${result.title}**\n`;
+            output += `   ${result.url}\n\n`;
+          });
+        }
 
-        console.log(
-          chalk.gray('\n💡 Use ') +
-            chalk.bold('docu search <term>') +
-            chalk.gray(' for more detailed results')
-        );
+        // Display with pager if requested
+        if (options.pager) {
+          const pager = new MarkdownPager(output);
+          await pager.display();
+        } else {
+          console.log(output);
+        }
       } catch (error) {
         console.error(
-          chalk.red('❌ Explanation failed:'),
+          chalk.red('🤖 Explanation failed:'),
           error instanceof Error ? error.message : String(error)
         );
         process.exit(1);
@@ -65,14 +101,11 @@ export const explainCommand = new Command('explain')
     }
   );
 
-function generateExplanation(
+function generateFallbackExplanation(
   query: string,
   results: any[],
   simple?: boolean
 ): string {
-  // This would integrate with an LLM API (OpenAI, Anthropic, etc.)
-  // For now, providing rule-based explanations
-
   const explanations: { [key: string]: { simple: string; detailed: string } } =
     {
       react: {
@@ -105,67 +138,73 @@ function generateExplanation(
   const explanation = explanations[key];
 
   if (explanation) {
-    return chalk.white(simple ? explanation.simple : explanation.detailed);
+    return simple ? explanation.simple : explanation.detailed;
   }
 
   // Fallback: extract explanation from search results
   const snippet = results[0]?.snippet || '';
   const sentences = snippet.split('.').slice(0, 2);
-  return chalk.white(sentences.join('.') + '.');
+  return sentences.join('.') + '.';
 }
 
 function generateCodeExamples(query: string): string {
   const examples: { [key: string]: string } = {
     usestate: `
-${chalk.gray('// Basic useState example')}
-${chalk.green("import React, { useState } from 'react';")}
+\`\`\`javascript
+// Basic useState example
+import React, { useState } from 'react';
 
-${chalk.green('function Counter() {')}
-${chalk.green('  const [count, setCount] = useState(0);')}
-${chalk.green('')}
-${chalk.green('  return (')}
-${chalk.green('    <div>')}
-${chalk.green('      <p>You clicked {count} times</p>')}
-${chalk.green('      <button onClick={() => setCount(count + 1)}>')}
-${chalk.green('        Click me')}
-${chalk.green('      </button>')}
-${chalk.green('    </div>')}
-${chalk.green('  );')}
-${chalk.green('}')}`,
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+\`\`\``,
 
     useeffect: `
-${chalk.gray('// Basic useEffect example')}
-${chalk.green("import React, { useState, useEffect } from 'react';")}
+\`\`\`javascript
+// Basic useEffect example
+import React, { useState, useEffect } from 'react';
 
-${chalk.green('function Example() {')}
-${chalk.green('  const [count, setCount] = useState(0);')}
-${chalk.green('')}
-${chalk.green('  useEffect(() => {')}
-${chalk.green('    document.title = `You clicked ${count} times`;')}
-${chalk.green('  });')}
-${chalk.green('')}
-${chalk.green('  return (')}
-${chalk.green('    <div>')}
-${chalk.green('      <p>You clicked {count} times</p>')}
-${chalk.green('      <button onClick={() => setCount(count + 1)}>')}
-${chalk.green('        Click me')}
-${chalk.green('      </button>')}
-${chalk.green('    </div>')}
-${chalk.green('  );')}
-${chalk.green('}')}`,
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = \`You clicked \${count} times\`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+\`\`\``,
 
     component: `
-${chalk.gray('// Functional component example')}
-${chalk.green('function Welcome(props) {')}
-${chalk.green('  return <h1>Hello, {props.name}!</h1>;')}
-${chalk.green('}')}
-${chalk.green('')}
-${chalk.gray('// Usage')}
-${chalk.green('<Welcome name="Sara" />')}`,
+\`\`\`javascript
+// Functional component example
+function Welcome(props) {
+  return <h1>Hello, {props.name}!</h1>;
+}
+
+// Usage
+<Welcome name="Sara" />
+\`\`\``,
   };
 
   return (
     examples[query.toLowerCase()] ||
-    chalk.gray('No code examples available for this topic.')
+    'No code examples available for this topic.'
   );
 }

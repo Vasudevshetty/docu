@@ -1,15 +1,103 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { SearchDocs } from '../core/SearchDocs';
+import { MarkdownPager } from '../utils/MarkdownPager';
+import { GroqService } from '../services/GroqService';
+import ora from 'ora';
+
+function generateMarkdownOutput(
+  query: string,
+  results: any[],
+  aiInsights: string
+): string {
+  let output = `# Search Results for "${query}"\n\n`;
+
+  if (aiInsights) {
+    output += `## 🤖 AI Insights\n\n${aiInsights}\n\n`;
+  }
+
+  output += `## 📚 Results (${results.length})\n\n`;
+
+  results.forEach((result, index) => {
+    output += `### ${index + 1}. ${result.title}\n\n`;
+    output += `**URL:** ${result.url}\n\n`;
+    output += `**Docset:** ${result.docset} | **Score:** ${result.score.toFixed(6)}\n\n`;
+    output += `${result.content || result.snippet}\n\n---\n\n`;
+  });
+
+  return output;
+}
+
+function generateTableOutput(
+  query: string,
+  results: any[],
+  options: any,
+  aiInsights: string
+): string {
+  let output = '';
+
+  if (aiInsights) {
+    output += chalk.bold.cyan('🤖 AI Insights:\n');
+    output += chalk.white(aiInsights) + '\n\n';
+  }
+
+  const totalText = results.length === 1 ? 'result' : 'results';
+  output += chalk.green(
+    `Found ${results.length} ${totalText} for "${query}":\n\n`
+  );
+
+  if (options.format === 'plain') {
+    results.forEach((result, index) => {
+      output += `${index + 1}. ${result.title}\n`;
+      output += `   ${result.url}\n`;
+      output += `   ${result.snippet.replace(/\*\*/g, '')}\n`;
+      output += `   Score: ${result.score.toFixed(6)} | Docset: ${result.docset}\n\n`;
+    });
+  } else {
+    // Enhanced table format (default)
+    results.forEach((result, index) => {
+      const number = chalk.cyan(`${index + 1}.`);
+      const title = chalk.bold.blue(result.title);
+      const url = chalk.gray(result.url);
+      const snippet =
+        options.highlight !== false
+          ? result.snippet
+          : result.snippet.replace(/\*\*/g, '');
+      const scoreText = chalk.yellow(`Score: ${result.score.toFixed(6)}`);
+      const docsetText = chalk.magenta(`Docset: ${result.docset}`);
+
+      output += `${number} ${title}\n`;
+      output += `   🔗 ${url}\n`;
+      output += `   📝 ${snippet}\n`;
+      output += `   📊 ${scoreText} | 📚 ${docsetText}\n\n`;
+    });
+  }
+
+  // Show summary
+  const uniqueDocsets = [...new Set(results.map((r) => r.docset))];
+  if (uniqueDocsets.length > 1) {
+    output += chalk.gray(
+      `Results from ${uniqueDocsets.length} docsets: ${uniqueDocsets.join(', ')}`
+    );
+  }
+
+  return output;
+}
 
 export const searchCommand = new Command('search')
-  .description('Search through cached documentation')
+  .description('Search through cached documentation with AI insights')
   .argument('<query>', 'Search query')
   .option('-d, --docset <docset>', 'Limit search to specific docset')
   .option('-l, --limit <number>', 'Maximum number of results', '10')
   .option('--min-score <score>', 'Minimum relevance score', '0.000001')
   .option('--no-highlight', 'Disable syntax highlighting in snippets')
-  .option('--format <format>', 'Output format: table, json, plain', 'table')
+  .option(
+    '--format <format>',
+    'Output format: table, json, plain, markdown',
+    'table'
+  )
+  .option('--ai', 'Enable AI-powered explanations and insights')
+  .option('--pager', 'Display results in a paginated viewer')
   .action(
     async (
       query: string,
@@ -19,6 +107,8 @@ export const searchCommand = new Command('search')
         minScore?: string;
         highlight?: boolean;
         format?: string;
+        ai?: boolean;
+        pager?: boolean;
       }
     ) => {
       try {
@@ -43,54 +133,43 @@ export const searchCommand = new Command('search')
           return;
         }
 
+        // AI Enhancement
+        let aiInsights = '';
+        if (options.ai) {
+          try {
+            const groq = GroqService.fromEnv();
+            const spinner = ora('Generating AI insights...').start();
+            aiInsights = await groq.enhanceSearchResults(query, results);
+            spinner.succeed('AI insights generated');
+          } catch (error) {
+            console.log(
+              chalk.yellow('⚠️  AI insights unavailable:'),
+              error instanceof Error ? error.message : String(error)
+            );
+          }
+        }
+
         // Handle different output formats
         if (options.format === 'json') {
-          console.log(JSON.stringify(results, null, 2));
+          console.log(JSON.stringify({ results, aiInsights }, null, 2));
           return;
         }
 
-        const totalText = results.length === 1 ? 'result' : 'results';
-        console.log(
-          chalk.green(`Found ${results.length} ${totalText} for "${query}":\n`)
-        );
+        let output = '';
 
-        if (options.format === 'plain') {
-          results.forEach((result, index) => {
-            console.log(`${index + 1}. ${result.title}`);
-            console.log(`   ${result.url}`);
-            console.log(`   ${result.snippet.replace(/\*\*/g, '')}`);
-            console.log(
-              `   Score: ${result.score.toFixed(6)} | Docset: ${result.docset}\n`
-            );
-          });
+        // Generate output content
+        if (options.format === 'markdown') {
+          output = generateMarkdownOutput(query, results, aiInsights);
         } else {
-          // Enhanced table format (default)
-          results.forEach((result, index) => {
-            const number = chalk.cyan(`${index + 1}.`);
-            const title = chalk.bold.blue(result.title);
-            const url = chalk.gray(result.url);
-            const snippet =
-              options.highlight !== false
-                ? result.snippet
-                : result.snippet.replace(/\*\*/g, '');
-            const scoreText = chalk.yellow(`Score: ${result.score.toFixed(6)}`);
-            const docsetText = chalk.magenta(`Docset: ${result.docset}`);
-
-            console.log(`${number} ${title}`);
-            console.log(`   🔗 ${url}`);
-            console.log(`   📝 ${snippet}`);
-            console.log(`   📊 ${scoreText} | 📚 ${docsetText}\n`);
-          });
+          output = generateTableOutput(query, results, options, aiInsights);
         }
 
-        // Show summary
-        const uniqueDocsets = [...new Set(results.map((r) => r.docset))];
-        if (uniqueDocsets.length > 1) {
-          console.log(
-            chalk.gray(
-              `Results from ${uniqueDocsets.length} docsets: ${uniqueDocsets.join(', ')}`
-            )
-          );
+        // Display with pager if requested
+        if (options.pager) {
+          const pager = new MarkdownPager(output);
+          await pager.display();
+        } else {
+          console.log(output);
         }
       } catch (error) {
         console.error(

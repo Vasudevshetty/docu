@@ -83,42 +83,96 @@ export class CheerioScraper {
   }
 
   private extractCleanText(element: cheerio.Cheerio<any>): string {
-    // Get raw text
-    let text = element.text();
-    
-    // Split into sentences and filter good ones
-    const sentences = text
-      .split(/[.!?]+/)
-      .map(sentence => sentence.trim())
-      .filter(sentence => 
-        sentence.length > 20 && 
-        sentence.length < 300 &&
-        !sentence.toLowerCase().includes('copyright') &&
-        !sentence.toLowerCase().includes('privacy') &&
-        !sentence.toLowerCase().includes('terms of')
+    // Remove unwanted elements first
+    const $elem = element.clone();
+    $elem
+      .find(
+        'script, style, nav, footer, .nav, .sidebar, .breadcrumb, .toc, .table-of-contents'
       )
-      .slice(0, 4); // Take first 4 good sentences
-    
-    let result = sentences.join('. ');
-    if (result && !result.endsWith('.')) {
-      result += '.';
-    }
-    
-    // Fallback to truncated text if no good sentences
-    if (!result || result.length < 50) {
-      result = text
-        .replace(/\s+/g, ' ')
-        .trim()
-        .substring(0, 300);
-      
-      // Cut at last complete word
-      const lastSpace = result.lastIndexOf(' ');
-      if (lastSpace > 150) {
-        result = result.substring(0, lastSpace) + '...';
+      .remove();
+
+    // Extract structured content with markdown
+    let content = '';
+
+    // Process each child element to maintain structure
+    $elem.children().each((_, child) => {
+      const $child = element.constructor(child);
+      const tagName = child.name?.toLowerCase();
+
+      switch (tagName) {
+        case 'h1':
+        case 'h2':
+        case 'h3':
+        case 'h4':
+        case 'h5':
+        case 'h6':
+          const level = '#'.repeat(parseInt(tagName[1]));
+          content += `\n${level} ${$child.text().trim()}\n\n`;
+          break;
+
+        case 'p':
+          const pText = $child.text().trim();
+          if (pText && pText.length > 10) {
+            content += `${pText}\n\n`;
+          }
+          break;
+
+        case 'ul':
+        case 'ol':
+          $child.find('li').each((_: number, li: any) => {
+            const liText = element.constructor(li).text().trim();
+            if (liText) {
+              content += `• ${liText}\n`;
+            }
+          });
+          content += '\n';
+          break;
+
+        case 'pre':
+        case 'code':
+          const codeText = $child.text().trim();
+          if (codeText && codeText.length < 500) {
+            content += `\n\`\`\`\n${codeText}\n\`\`\`\n\n`;
+          }
+          break;
+
+        case 'blockquote':
+          const quoteText = $child.text().trim();
+          if (quoteText) {
+            content += `> ${quoteText}\n\n`;
+          }
+          break;
+
+        default:
+          const defaultText = $child.text().trim();
+          if (
+            defaultText &&
+            defaultText.length > 20 &&
+            defaultText.length < 300
+          ) {
+            content += `${defaultText}\n\n`;
+          }
       }
+    });
+
+    // Fallback: if no structured content, extract clean sentences
+    if (!content || content.trim().length < 100) {
+      const sentences = element
+        .text()
+        .split(/[.!?]+/)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 20 && s.length < 300)
+        .slice(0, 5);
+
+      content = sentences.join('. ') + (sentences.length > 0 ? '.' : '');
     }
-    
-    return result.replace(/\s+/g, ' ').trim();
+
+    // Clean up the content
+    return content
+      .replace(/\n{3,}/g, '\n\n') // Remove excessive newlines
+      .replace(/\s+/g, ' ') // Normalize spaces
+      .replace(/\n /g, '\n') // Remove spaces after newlines
+      .trim();
   }
 
   private generateId(url: string): string {
