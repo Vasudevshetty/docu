@@ -19,20 +19,11 @@ export class SearchDocs {
     // Set default options
     const searchOptions: SearchOptions = {
       limit: 10,
-      minScore: 0.1,
+      minScore: 0.000001, // BM25 scores are typically very small
       ...options,
     };
 
     const results = await this.indexer.search(query, searchOptions);
-
-    if (results.length === 0) {
-      console.log(`No results found for "${query}"`);
-      console.log('Try:');
-      console.log('- Using different keywords');
-      console.log('- Checking if the docset is installed with "docu list"');
-      console.log('- Fetching documentation with "docu fetch <docset>"');
-    }
-
     return results;
   }
 }

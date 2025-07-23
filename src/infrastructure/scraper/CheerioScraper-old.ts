@@ -83,96 +83,84 @@ export class CheerioScraper {
   }
 
   private extractCleanText(element: cheerio.Cheerio<any>): string {
-    // Remove unwanted elements first
-    const $elem = element.clone();
-    $elem
-      .find(
-        'script, style, nav, footer, .nav, .sidebar, .breadcrumb, .toc, .table-of-contents'
-      )
-      .remove();
+    // Clone the element to avoid modifying the original
+    const $element = element.clone();
 
-    // Extract structured content with markdown
-    let content = '';
+    // Remove script, style, nav, footer elements
+    $element.find('script, style, nav, footer, .nav, .sidebar').remove();
 
-    // Process each child element to maintain structure
-    $elem.children().each((_, child) => {
-      const $child = element.constructor(child);
-      const tagName = child.name?.toLowerCase();
-
-      switch (tagName) {
-        case 'h1':
-        case 'h2':
-        case 'h3':
-        case 'h4':
-        case 'h5':
-        case 'h6':
-          const level = '#'.repeat(parseInt(tagName[1]));
-          content += `\n${level} ${$child.text().trim()}\n\n`;
-          break;
-
-        case 'p':
-          const pText = $child.text().trim();
-          if (pText && pText.length > 10) {
-            content += `${pText}\n\n`;
-          }
-          break;
-
-        case 'ul':
-        case 'ol':
-          $child.find('li').each((_: number, li: any) => {
-            const liText = element.constructor(li).text().trim();
-            if (liText) {
-              content += `• ${liText}\n`;
-            }
-          });
-          content += '\n';
-          break;
-
-        case 'pre':
-        case 'code':
-          const codeText = $child.text().trim();
-          if (codeText && codeText.length < 500) {
-            content += `\n\`\`\`\n${codeText}\n\`\`\`\n\n`;
-          }
-          break;
-
-        case 'blockquote':
-          const quoteText = $child.text().trim();
-          if (quoteText) {
-            content += `> ${quoteText}\n\n`;
-          }
-          break;
-
-        default:
-          const defaultText = $child.text().trim();
-          if (
-            defaultText &&
-            defaultText.length > 20 &&
-            defaultText.length < 300
-          ) {
-            content += `${defaultText}\n\n`;
-          }
+    // Convert code elements to readable format
+    $element.find('code, pre').each((_, el) => {
+      const $el = element.constructor(el);
+      const codeText = $el.text().trim();
+      if (codeText.length > 0 && codeText.length < 100) {
+        $el.replaceWith(`\`${codeText}\``);
+      } else {
+        $el.replaceWith(`[Code block: ${codeText.substring(0, 50)}...]`);
       }
     });
 
-    // Fallback: if no structured content, extract clean sentences
-    if (!content || content.trim().length < 100) {
+    // Convert links to readable format
+    $element.find('a').each((_, el) => {
+      const $el = element.constructor(el);
+      const linkText = $el.text().trim();
+      const href = $el.attr('href');
+      if (linkText && linkText !== href) {
+        $el.replaceWith(linkText);
+      }
+    });
+
+    // Convert headings to have clear structure
+    $element.find('h1, h2, h3, h4, h5, h6').each((_, el) => {
+      const $el = element.constructor(el);
+      const text = $el.text().trim();
+      $el.replaceWith(`\n\n**${text}**\n`);
+    });
+
+    // Convert paragraphs to have proper spacing
+    $element.find('p').each((_, el) => {
+      const $el = element.constructor(el);
+      const text = $el.text().trim();
+      if (text) {
+        $el.replaceWith(`\n${text}\n`);
+      }
+    });
+
+    // Convert list items
+    $element.find('li').each((_, el) => {
+      const $el = element.constructor(el);
+      const text = $el.text().trim();
+      if (text) {
+        $el.replaceWith(`\n• ${text}`);
+      }
+    });
+
+    // Get the final text and clean it up
+    let text = $element.text();
+
+    // Clean up whitespace and formatting
+    text = text
+      .replace(/\n\s*\n\s*\n/g, '\n\n') // Multiple newlines to double
+      .replace(/\s+/g, ' ') // Multiple spaces to single
+      .replace(/\n /g, '\n') // Remove spaces after newlines
+      .replace(/ \n/g, '\n') // Remove spaces before newlines
+      .trim();
+
+    // If text is still too messy, try a simpler approach
+    if (text.length > 1000 && text.includes('...')) {
+      // Fallback to just getting the first few sentences
       const sentences = element
         .text()
+        .replace(/\s+/g, ' ')
         .split(/[.!?]+/)
+        .slice(0, 3)
         .map((s) => s.trim())
-        .filter((s) => s.length > 20 && s.length < 300)
-        .slice(0, 5);
+        .filter((s) => s.length > 10);
 
-      content = sentences.join('. ') + (sentences.length > 0 ? '.' : '');
+      text = sentences.join('. ') + (sentences.length > 0 ? '.' : '');
     }
 
-    // Clean up the content
-    return content
-      .replace(/\n{3,}/g, '\n\n') // Remove excessive newlines
-      .replace(/\s+/g, ' ') // Normalize spaces
-      .replace(/\n /g, '\n') // Remove spaces after newlines
-      .trim();
+    return text;
   }
 
   private generateId(url: string): string {

@@ -73,11 +73,11 @@ export class SQLiteIndexer {
       }
     }
 
-    // Sort by score descending
+    // Sort by score descending (higher score = better match)
     results.sort((a, b) => b.score - a.score);
 
     // Apply limit
-    if (options.limit) {
+    if (options.limit && results.length > options.limit) {
       results.splice(options.limit);
     }
 
@@ -90,32 +90,52 @@ export class SQLiteIndexer {
     options: SearchOptions,
     results: SearchResult[]
   ): Promise<void> {
-    try {
-      await this.initializeIndex(docsetName);
+    let db: Database.Database | null = null;
 
-      if (!this.db) return;
+    try {
+      await this.storage.ensureIndexDir();
+      const dbPath = this.storage.getIndexPath(docsetName);
+
+      // Check if database exists
+      const fs = await import('fs/promises');
+      try {
+        await fs.access(dbPath);
+      } catch {
+        console.warn(
+          `No search index found for ${docsetName}. Run "docu fetch ${docsetName}" first.`
+        );
+        return;
+      }
+
+      db = new Database(dbPath, { readonly: true });
 
       const searchQuery = `
-        SELECT id, title, url, snippet(docs_fts, 3, '<mark>', '</mark>', '...', 64) as snippet,
-               rank as score, docset
+        SELECT id, title, url, snippet(docs_fts, 3, '<mark>', '</mark>', '...', 32) as snippet,
+               bm25(docs_fts) as score, docset
         FROM docs_fts
         WHERE docs_fts MATCH ?
-        ORDER BY rank
+        ORDER BY bm25(docs_fts)
         LIMIT ?
       `;
 
-      const searchResults = this.db
+      const preparedQuery = this.prepareFTSQuery(query);
+
+      const searchResults = db
         .prepare(searchQuery)
-        .all(this.prepareFTSQuery(query), options.limit || 50);
+        .all(preparedQuery, options.limit || 50);
 
       for (const row of searchResults as any[]) {
-        if (!options.minScore || row.score >= options.minScore) {
+        // BM25 returns negative scores, convert to positive (lower is better, so we negate)
+        const score = Math.abs(row.score);
+
+        if (!options.minScore || score >= options.minScore) {
+          const cleanSnippet = this.cleanSnippet(row.snippet);
           results.push({
             id: row.id,
             title: row.title,
             url: row.url,
-            snippet: row.snippet.replace(/<\/?mark>/g, '**'),
-            score: Math.abs(row.score), // FTS5 returns negative scores
+            snippet: cleanSnippet,
+            score: score,
             docset: row.docset,
           });
         }
@@ -123,20 +143,34 @@ export class SQLiteIndexer {
     } catch (error) {
       console.warn(`Failed to search in ${docsetName}:`, error);
     } finally {
-      this.closeDatabase();
+      if (db) {
+        db.close();
+      }
     }
   }
 
   private prepareFTSQuery(query: string): string {
-    // Escape and prepare query for FTS5
+    // Simple FTS5 query preparation
+    // Split query into terms and join with AND for better matching
     const terms = query
       .toLowerCase()
+      .trim()
       .split(/\s+/)
       .filter((term) => term.length > 0)
-      .map((term) => `"${term.replace(/"/g, '""')}"`)
-      .join(' OR ');
+      .map((term) => term.replace(/"/g, '""')) // Escape quotes
+      .join(' AND ');
 
-    return terms || '""';
+    return terms || query.trim();
+  }
+
+  private cleanSnippet(snippet: string): string {
+    return snippet
+      .replace(/<\/?mark>/g, '**') // Convert HTML marks to markdown
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .replace(/\.\.\.\s*/g, '... ') // Clean up ellipses
+      .replace(/\*\*\s+/g, '**') // Remove spaces after opening marks
+      .replace(/\s+\*\*/g, '**') // Remove spaces before closing marks
+      .trim();
   }
 
   async removeIndex(docsetName: string): Promise<void> {
