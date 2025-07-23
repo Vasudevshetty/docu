@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+*.log
+.env
+.DS_Store
+.vscode/
+.idea/
+
+# User cache directory (for testing)
+.docu/

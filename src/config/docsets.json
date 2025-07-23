@@ -1,0 +1,44 @@
+[
+  {
+    "name": "react",
+    "description": "React Documentation",
+    "baseUrl": "https://react.dev",
+    "scrapeRules": {
+      "entryPoints": ["https://react.dev/learn", "https://react.dev/reference"],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": "main, article, .content",
+        "exclude": "nav, footer, .sidebar"
+      }
+    }
+  },
+  {
+    "name": "nodejs",
+    "description": "Node.js Documentation",
+    "baseUrl": "https://nodejs.org/api",
+    "scrapeRules": {
+      "entryPoints": ["https://nodejs.org/api/"],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": "#content, .api-docs",
+        "exclude": "nav, footer"
+      }
+    }
+  },
+  {
+    "name": "python",
+    "description": "Python Documentation",
+    "baseUrl": "https://docs.python.org/3",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://docs.python.org/3/library/",
+        "https://docs.python.org/3/tutorial/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3",
+        "content": ".body, .document",
+        "exclude": ".sphinxsidebar, .related"
+      }
+    }
+  }
+]
