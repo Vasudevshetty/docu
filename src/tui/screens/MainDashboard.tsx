@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import { Screen } from '../App.js';
+import { ListDocs } from '../../core/ListDocs.js';
 import { FileSystemAdapter } from '../../infrastructure/storage/FileSystemAdapter.js';
 
 interface MainDashboardProps {
   onNavigate: (screen: Screen, options?: any) => void;
+  setLoading: (loading: boolean) => void;
 }
 
 interface DashboardStats {
+  totalDocsets: number;
   totalDocs: number;
-  availableDocsets: number;
+  cacheSize: string;
   lastUpdated: string;
+  status: 'ready' | 'empty' | 'error';
 }
 
-export function MainDashboard({ onNavigate }: MainDashboardProps) {
+export function MainDashboard({ onNavigate, setLoading }: MainDashboardProps) {
   const [stats, setStats] = useState<DashboardStats>({
+    totalDocsets: 0,
     totalDocs: 0,
-    availableDocsets: 0,
+    cacheSize: '0 MB',
     lastUpdated: 'Never',
+    status: 'empty',
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -26,51 +32,82 @@ export function MainDashboard({ onNavigate }: MainDashboardProps) {
   }, []);
 
   const loadStats = async () => {
+    setLoading(true);
     try {
+      const lister = new ListDocs();
+      const docsets = await lister.getAll();
       const storage = new FileSystemAdapter();
-      const docsets = await storage.listDocsets();
+
+      let totalDocs = 0;
+      let lastUpdated = 'Never';
+      let latestDate: Date | null = null;
+
+      for (const docset of docsets) {
+        totalDocs += docset.metadata.totalDocs || 0;
+        if (docset.metadata.lastFetched) {
+          const fetchDate = new Date(docset.metadata.lastFetched);
+          if (!latestDate || fetchDate > latestDate) {
+            latestDate = fetchDate;
+            lastUpdated = fetchDate.toLocaleDateString();
+          }
+        }
+      }
 
       setStats({
-        totalDocs: docsets.length * 100,
-        availableDocsets: docsets.length,
-        lastUpdated: docsets.length > 0 ? 'Recently' : 'Never',
+        totalDocsets: docsets.length,
+        totalDocs,
+        cacheSize: '~' + Math.round(docsets.length * 2.5) + ' MB',
+        lastUpdated: docsets.length > 0 ? lastUpdated : 'Never',
+        status: docsets.length > 0 ? 'ready' : 'empty',
       });
     } catch (error) {
-      // Handle error silently
+      setStats((prev) => ({ ...prev, status: 'error' }));
+    } finally {
+      setLoading(false);
     }
   };
 
   const menuItems = [
     {
+      key: '1',
       label: 'Search Documentation',
-      value: 'search',
+      screen: 'search' as Screen,
       icon: '🔍',
-      desc: 'Find docs across all docsets',
+      desc: 'Full-text search across all docsets',
+      available: stats.status === 'ready',
     },
     {
-      label: 'Browse Docsets',
-      value: 'docsets',
+      key: '2',
+      label: 'Manage Docsets',
+      screen: 'docsets' as Screen,
       icon: '📚',
-      desc: 'Manage installed documentation',
+      desc: 'View and manage installed docs',
+      available: true,
     },
     {
+      key: '3',
+      label: 'Browse Available',
+      screen: 'available' as Screen,
+      icon: '📦',
+      desc: 'Install new documentation sets',
+      available: true,
+    },
+    {
+      key: '4',
       label: 'Settings',
-      value: 'settings',
+      screen: 'settings' as Screen,
       icon: '⚙️',
-      desc: 'Configure docu-cli preferences',
-    },
-    {
-      label: 'Help',
-      value: 'help',
-      icon: '❓',
-      desc: 'View keyboard shortcuts and help',
+      desc: 'Configure preferences & API keys',
+      available: true,
     },
   ];
 
   useInput((input: string, key: any) => {
     if (key.return) {
       const selected = menuItems[selectedIndex];
-      onNavigate(selected.value as Screen);
+      if (selected.available) {
+        onNavigate(selected.screen);
+      }
     }
 
     if ((key.upArrow || input === 'k') && selectedIndex > 0) {
@@ -84,135 +121,192 @@ export function MainDashboard({ onNavigate }: MainDashboardProps) {
       setSelectedIndex(selectedIndex + 1);
     }
 
-    // Number shortcuts
+    // Direct navigation shortcuts
     const num = parseInt(input);
     if (num >= 1 && num <= menuItems.length) {
       const selected = menuItems[num - 1];
-      onNavigate(selected.value as Screen);
+      if (selected.available) {
+        onNavigate(selected.screen);
+      }
+    }
+
+    // Quick actions
+    if (input === 'r') {
+      loadStats();
     }
   });
 
   return (
-    <Box flexDirection="column" height="100%" paddingX={2} paddingY={1}>
-      {/* Clean Header */}
-      <Box justifyContent="center" marginBottom={2}>
-        <Text color="cyan" bold>
-          docu-cli{' '}
-        </Text>
-        <Text color="gray">• Professional Documentation Browser</Text>
-      </Box>
-
-      {/* Main Content Area */}
-      <Box flexDirection="row" flexGrow={1} gap={2}>
-        {/* Left Sidebar - Stats */}
-        <Box width={30} flexDirection="column">
-          <Box
-            borderStyle="round"
-            borderColor="cyan"
-            paddingX={2}
-            paddingY={1}
-            marginBottom={1}
-          >
-            <Text color="cyan" bold>
-              📊 Overview
+    <Box flexDirection="row" height="100%" paddingX={1} paddingY={1} gap={1}>
+      {/* Left Panel - Stats */}
+      <Box width={32} flexDirection="column">
+        <Box
+          borderStyle="round"
+          borderColor={
+            stats.status === 'ready'
+              ? 'green'
+              : stats.status === 'error'
+                ? 'red'
+                : 'yellow'
+          }
+          paddingX={2}
+          paddingY={1}
+          marginBottom={1}
+        >
+          <Box flexDirection="column">
+            <Text color="white" bold>
+              📊 System Status
             </Text>
-            <Box marginTop={1} flexDirection="column">
-              <Box justifyContent="space-between" marginBottom={0}>
-                <Text color="white">Documents</Text>
-                <Text color="yellow">{stats.totalDocs}</Text>
-              </Box>
-              <Box justifyContent="space-between" marginBottom={0}>
-                <Text color="white">Docsets</Text>
-                <Text color="green">{stats.availableDocsets}</Text>
+            <Box marginTop={1} flexDirection="column" gap={0}>
+              <Box justifyContent="space-between">
+                <Text color="gray">Docsets:</Text>
+                <Text color={stats.totalDocsets > 0 ? 'green' : 'yellow'}>
+                  {stats.totalDocsets}
+                </Text>
               </Box>
               <Box justifyContent="space-between">
-                <Text color="white">Status</Text>
-                <Text color={stats.availableDocsets > 0 ? 'green' : 'red'}>
-                  {stats.availableDocsets > 0 ? 'Ready' : 'Setup Required'}
+                <Text color="gray">Documents:</Text>
+                <Text color={stats.totalDocs > 0 ? 'green' : 'gray'}>
+                  {stats.totalDocs.toLocaleString()}
+                </Text>
+              </Box>
+              <Box justifyContent="space-between">
+                <Text color="gray">Cache:</Text>
+                <Text color="cyan">{stats.cacheSize}</Text>
+              </Box>
+              <Box justifyContent="space-between">
+                <Text color="gray">Updated:</Text>
+                <Text color="gray">{stats.lastUpdated}</Text>
+              </Box>
+              <Box justifyContent="space-between" marginTop={1}>
+                <Text color="gray">Status:</Text>
+                <Text
+                  color={
+                    stats.status === 'ready'
+                      ? 'green'
+                      : stats.status === 'error'
+                        ? 'red'
+                        : 'yellow'
+                  }
+                >
+                  {stats.status === 'ready'
+                    ? '✓ Ready'
+                    : stats.status === 'error'
+                      ? '✗ Error'
+                      : '⚠ Setup Required'}
                 </Text>
               </Box>
             </Box>
           </Box>
+        </Box>
 
-          <Box borderStyle="round" borderColor="gray" paddingX={2} paddingY={1}>
-            <Text color="gray" bold>
+        <Box borderStyle="round" borderColor="gray" paddingX={2} paddingY={1}>
+          <Box flexDirection="column">
+            <Text color="cyan" bold>
               💡 Quick Tips
             </Text>
             <Box marginTop={1} flexDirection="column">
               <Text color="gray" dimColor>
-                • Numbers 1-4: Quick nav
+                • Press numbers 1-4 for quick access
               </Text>
               <Text color="gray" dimColor>
-                • ↑↓ or j/k: Navigate
+                • Use ↑↓ or j/k to navigate
               </Text>
               <Text color="gray" dimColor>
-                • Enter: Select action
+                • Press r to refresh stats
               </Text>
               <Text color="gray" dimColor>
-                • h: Show help anytime
+                • Press h for help anytime
               </Text>
             </Box>
           </Box>
         </Box>
+      </Box>
 
-        {/* Main Menu Area */}
-        <Box flexGrow={1} flexDirection="column">
-          <Box
-            borderStyle="round"
-            borderColor="white"
-            paddingX={3}
-            paddingY={2}
-          >
+      {/* Right Panel - Actions */}
+      <Box flexGrow={1} flexDirection="column">
+        <Box
+          borderStyle="round"
+          borderColor="cyan"
+          paddingX={3}
+          paddingY={1}
+          height="100%"
+        >
+          <Box flexDirection="column" width="100%">
             <Box marginBottom={1}>
-              <Text color="white" bold>
+              <Text color="cyan" bold>
                 🚀 Available Actions
               </Text>
             </Box>
 
-            {menuItems.map((item, index) => (
-              <Box key={item.value} marginBottom={1}>
+            {menuItems.map((item, index) => {
+              const isSelected = index === selectedIndex;
+              const isAvailable = item.available;
+
+              return (
                 <Box
+                  key={item.key}
                   paddingX={2}
                   paddingY={1}
-                  borderStyle={index === selectedIndex ? 'round' : undefined}
-                  borderColor={index === selectedIndex ? 'cyan' : undefined}
+                  marginBottom={1}
+                  borderStyle={isSelected ? 'round' : undefined}
+                  borderColor={isSelected ? 'cyan' : undefined}
                   width="100%"
                 >
-                  <Box width="100%" justifyContent="space-between">
+                  <Box width="100%" flexDirection="column">
                     <Box>
                       <Text
-                        color={index === selectedIndex ? 'cyan' : 'white'}
-                        bold
+                        color={
+                          !isAvailable ? 'gray' : isSelected ? 'cyan' : 'white'
+                        }
+                        bold={isSelected}
+                        dimColor={!isAvailable}
                       >
-                        {index === selectedIndex ? '▶ ' : '  '}
-                        {index + 1}. {item.icon} {item.label}
+                        {isSelected ? '▶ ' : '  '}
+                        {item.key}. {item.icon} {item.label}
                       </Text>
+                      {!isAvailable && (
+                        <Text color="yellow"> (requires setup)</Text>
+                      )}
                     </Box>
-                    <Box width={35}>
+                    <Box marginLeft={4} marginTop={0}>
                       <Text color="gray" dimColor>
                         {item.desc}
                       </Text>
                     </Box>
                   </Box>
                 </Box>
+              );
+            })}
+
+            {stats.status === 'empty' && (
+              <Box
+                marginTop={2}
+                paddingX={2}
+                paddingY={1}
+                borderStyle="round"
+                borderColor="yellow"
+              >
+                <Box flexDirection="column">
+                  <Text color="yellow" bold>
+                    🎯 Getting Started
+                  </Text>
+                  <Box marginTop={1}>
+                    <Text color="gray">
+                      1. Press 3 to browse available docsets
+                    </Text>
+                  </Box>
+                  <Text color="gray">
+                    2. Install documentation for your tools
+                  </Text>
+                  <Text color="gray">
+                    3. Start searching with full-text search
+                  </Text>
+                </Box>
               </Box>
-            ))}
+            )}
           </Box>
         </Box>
-      </Box>
-
-      {/* Status Footer */}
-      <Box
-        justifyContent="center"
-        marginTop={1}
-        borderStyle="single"
-        borderColor="gray"
-        paddingY={0}
-      >
-        <Text color="gray">
-          Navigation: ↑↓ j/k • Select: Enter • Shortcuts: 1-4 • Help: h • Quit:
-          q
-        </Text>
       </Box>
     </Box>
   );

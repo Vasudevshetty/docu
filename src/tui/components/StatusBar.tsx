@@ -8,40 +8,48 @@ interface StatusBarProps {
 }
 
 export function StatusBar({ currentScreen, isLoading }: StatusBarProps) {
-  const getScreenInfo = (screen: Screen) => {
-    const screens = {
-      dashboard: { icon: '🏠', title: 'Dashboard', color: 'cyan' },
-      search: { icon: '🔍', title: 'Search', color: 'green' },
-      docsets: { icon: '📚', title: 'Docsets', color: 'blue' },
-      viewer: { icon: '📖', title: 'Document', color: 'yellow' },
-      settings: { icon: '⚙️', title: 'Settings', color: 'magenta' },
-      help: { icon: '❓', title: 'Help', color: 'gray' },
-    };
-    return screens[screen] || { icon: '❓', title: 'Unknown', color: 'white' };
+  const getQuickActions = (screen: Screen) => {
+    const base = ['1:Search', '2:Docsets', '3:Available', '4:Settings'];
+
+    switch (screen) {
+      case 'search':
+        return ['Enter:Search', '↑↓:Navigate', 'Enter:View', 'ESC:Back'];
+      case 'docsets':
+        return ['↑↓:Navigate', 'Enter:Manage', 'd:Delete', 'ESC:Back'];
+      case 'available':
+        return ['↑↓:Navigate', 'Enter:Install', 'i:Info', 'ESC:Back'];
+      case 'viewer':
+        return ['↑↓:Scroll', 'PgUp/PgDn:Page', 'ESC:Back'];
+      case 'settings':
+        return ['↑↓:Navigate', 'Enter:Edit', 'ESC:Back'];
+      case 'help':
+        return ['↑↓:Scroll', 'ESC:Back'];
+      default:
+        return base;
+    }
   };
 
-  const currentInfo = getScreenInfo(currentScreen);
-  const shortcuts = ['1:Search', '2:Docsets', '3:Settings', 'h:Help', 'q:Quit'];
+  const actions = getQuickActions(currentScreen);
 
   return (
-    <Box borderStyle="single" borderColor="gray" paddingX={2}>
+    <Box borderStyle="single" borderColor="gray" paddingX={2} paddingY={0}>
       <Box justifyContent="space-between" width="100%">
-        {/* Left: Current Screen Info */}
+        {/* Left: Quick actions for current screen */}
         <Box>
-          <Text color="cyan" bold>
-            docu-cli
-          </Text>
-          <Text color="gray"> › </Text>
-          <Text color={currentInfo.color as any}>
-            {currentInfo.icon} {currentInfo.title}
-          </Text>
-          {isLoading && <Text color="yellow"> ⟳</Text>}
+          {actions.map((action, index) => (
+            <React.Fragment key={action}>
+              {index > 0 && <Text color="gray"> • </Text>}
+              <Text color="cyan">{action.split(':')[0]}</Text>
+              <Text color="gray">:{action.split(':')[1]}</Text>
+            </React.Fragment>
+          ))}
         </Box>
 
-        {/* Right: Quick Shortcuts */}
+        {/* Right: Global shortcuts */}
         <Box>
           <Text color="gray">
-            1:Search • 2:Docsets • 3:Settings • h:Help • q:Quit
+            h:Help • ESC:Home • q:Quit
+            {isLoading && <Text color="yellow"> • ⟳ Loading</Text>}
           </Text>
         </Box>
       </Box>

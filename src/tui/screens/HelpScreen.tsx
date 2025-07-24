@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import { Screen } from '../App.js';
 
@@ -7,159 +7,213 @@ interface HelpScreenProps {
 }
 
 export function HelpScreen({ onNavigate }: HelpScreenProps) {
+  const [selectedSection, setSelectedSection] = useState(0);
+
   useInput((input: string, key: any) => {
-    if (key.escape || input === 'q') {
-      onNavigate('dashboard');
+    if (key.upArrow && selectedSection > 0) {
+      setSelectedSection(selectedSection - 1);
+    }
+
+    if (key.downArrow && selectedSection < 3) {
+      setSelectedSection(selectedSection + 1);
     }
   });
 
-  const shortcuts = [
-    { key: '1', action: 'Go to Dashboard' },
-    { key: '2', action: 'Go to Search' },
-    { key: '3', action: 'Go to Docsets' },
-    { key: '4', action: 'Go to Settings' },
-    { key: '?', action: 'Show this help' },
-    { key: 'ESC', action: 'Go back / Exit' },
-    { key: 'Ctrl+C', action: 'Exit application' },
-  ];
-
-  const searchHelp = [
-    { key: 'Enter', action: 'Execute search' },
-    { key: '↑↓', action: 'Navigate results' },
-    { key: 'Enter', action: 'View selected result' },
-    { key: '/', action: 'New search' },
-    { key: 'ESC', action: 'Back to input / Dashboard' },
-  ];
-
-  const docsetHelp = [
-    { key: '1/2', action: 'Switch between Installed/Available' },
-    { key: 'Tab', action: 'Switch tabs' },
-    { key: '↑↓', action: 'Navigate docsets' },
-    { key: 'Enter', action: 'Select docset' },
-    { key: 'R', action: 'Refresh list' },
-  ];
-
-  const viewerHelp = [
-    { key: '↑↓ / J/K', action: 'Scroll up/down' },
-    { key: 'PageUp/Down', action: 'Page up/down' },
-    { key: 'G/g', action: 'Go to top/bottom' },
-    { key: 'ESC', action: 'Back to search' },
-    { key: 'Q', action: 'Back to dashboard' },
+  const sections = [
+    {
+      title: '🎯 Global Shortcuts',
+      color: 'cyan',
+      items: [
+        { key: '1', action: 'Search Documentation' },
+        { key: '2', action: 'Manage Installed Docsets' },
+        { key: '3', action: 'Browse Available Docsets' },
+        { key: '4', action: 'Settings & Configuration' },
+        { key: 'h / ?', action: 'Show this help screen' },
+        { key: 'ESC / 0', action: 'Return to Dashboard' },
+        { key: 'q', action: 'Quit (from Dashboard only)' },
+        { key: 'Ctrl+C', action: 'Force exit application' },
+      ],
+    },
+    {
+      title: '🔍 Search Screen',
+      color: 'green',
+      items: [
+        { key: 'Type query', action: 'Enter search terms' },
+        { key: 'Enter', action: 'Execute search & switch to results' },
+        { key: 'TAB', action: 'Switch between input/results or cycle filters' },
+        { key: '↑↓', action: 'Navigate search results' },
+        { key: 'Enter', action: 'View selected document' },
+        { key: 'PgUp/PgDn', action: 'Jump 10 results up/down' },
+        { key: 'ESC', action: 'Return to Dashboard' },
+      ],
+    },
+    {
+      title: '📚 Docset Browser',
+      color: 'blue',
+      items: [
+        { key: 'TAB', action: 'Switch between Installed/Available modes' },
+        { key: '↑↓', action: 'Navigate docset list' },
+        {
+          key: 'Enter',
+          action: 'Search docset (installed) / Install (available)',
+        },
+        { key: 'i', action: 'Install selected docset (available mode)' },
+        { key: 'd', action: 'Delete selected docset (installed mode)' },
+        { key: 'r', action: 'Refresh docset lists' },
+        { key: 'ESC', action: 'Return to Dashboard' },
+      ],
+    },
+    {
+      title: '📖 Document Viewer',
+      color: 'yellow',
+      items: [
+        { key: '↑↓ / j/k', action: 'Scroll up/down line by line' },
+        { key: 'PgUp/PgDn', action: 'Scroll page up/down' },
+        { key: 'Home/End', action: 'Go to start/end of document' },
+        { key: 'ESC', action: 'Return to search results' },
+        { key: '/', action: 'Search within document (if available)' },
+      ],
+    },
   ];
 
   return (
-    <Box flexDirection="column" paddingX={3} paddingY={2}>
+    <Box flexDirection="column" height="100%" paddingX={1} paddingY={1}>
       {/* Header */}
-      <Box marginBottom={2} justifyContent="center">
-        <Text color="cyan" bold>
-          docu-cli{' '}
-        </Text>
-        <Text color="white">Help & Keyboard Shortcuts</Text>
-      </Box>
-
-      <Box flexDirection="row" columnGap={3}>
-        {/* Left Column - General & Search */}
-        <Box width="50%">
-          {/* General Shortcuts */}
-          <Box
-            borderStyle="round"
-            paddingX={2}
-            paddingY={1}
-            marginBottom={2}
-            flexDirection="column"
-          >
+      <Box
+        borderStyle="round"
+        borderColor="cyan"
+        paddingX={2}
+        paddingY={1}
+        marginBottom={1}
+      >
+        <Box flexDirection="column" width="100%">
+          <Box justifyContent="center" marginBottom={1}>
             <Text color="cyan" bold>
-              🎯 General Shortcuts
+              docu-cli v0.3.3 - Help & Documentation
             </Text>
-            <Box marginTop={1} flexDirection="column" rowGap={0}>
-              {shortcuts.map((shortcut, index) => (
-                <Box key={index} justifyContent="space-between">
-                  <Text color="yellow" bold>
-                    {shortcut.key}
-                  </Text>
-                  <Text color="white">{shortcut.action}</Text>
-                </Box>
-              ))}
-            </Box>
           </Box>
-
-          {/* Search Help */}
-          <Box
-            borderStyle="round"
-            paddingX={2}
-            paddingY={1}
-            flexDirection="column"
-          >
-            <Text color="green" bold>
-              🔍 Search Screen
+          <Box justifyContent="center">
+            <Text color="gray">
+              AI-Powered Documentation Browser • Use ↑↓ to scroll sections
             </Text>
-            <Box marginTop={1} flexDirection="column" rowGap={0}>
-              {searchHelp.map((help, index) => (
-                <Box key={index} justifyContent="space-between">
-                  <Text color="yellow" bold>
-                    {help.key}
-                  </Text>
-                  <Text color="white">{help.action}</Text>
-                </Box>
-              ))}
-            </Box>
           </Box>
         </Box>
+      </Box>
 
-        {/* Right Column - Docsets & Viewer */}
-        <Box width="50%">
-          {/* Docset Help */}
-          <Box
-            borderStyle="round"
-            paddingX={2}
-            paddingY={1}
-            marginBottom={2}
-            flexDirection="column"
-          >
-            <Text color="blue" bold>
-              📚 Docset Browser
-            </Text>
-            <Box marginTop={1} flexDirection="column" rowGap={0}>
-              {docsetHelp.map((help, index) => (
-                <Box key={index} justifyContent="space-between">
-                  <Text color="yellow" bold>
-                    {help.key}
+      {/* Content */}
+      <Box flexGrow={1} flexDirection="row" gap={1}>
+        {/* Left Column */}
+        <Box width="50%" flexDirection="column">
+          {sections.slice(0, 2).map((section, index) => (
+            <Box
+              key={index}
+              borderStyle="round"
+              borderColor={
+                selectedSection === index ? (section.color as any) : 'gray'
+              }
+              paddingX={2}
+              paddingY={1}
+              marginBottom={1}
+              height="50%"
+            >
+              <Box flexDirection="column" width="100%">
+                <Box marginBottom={1}>
+                  <Text color={section.color as any} bold>
+                    {section.title}
                   </Text>
-                  <Text color="white">{help.action}</Text>
                 </Box>
-              ))}
+                <Box flexDirection="column">
+                  {section.items.map((item, itemIndex) => (
+                    <Box
+                      key={itemIndex}
+                      justifyContent="space-between"
+                      marginBottom={0}
+                    >
+                      <Text color="yellow" bold>
+                        {item.key.padEnd(12)}
+                      </Text>
+                      <Text color="white">{item.action}</Text>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
             </Box>
-          </Box>
+          ))}
+        </Box>
 
-          {/* Viewer Help */}
-          <Box
-            borderStyle="round"
-            paddingX={2}
-            paddingY={1}
-            flexDirection="column"
-          >
-            <Text color="magenta" bold>
-              📄 Document Viewer
-            </Text>
-            <Box marginTop={1} flexDirection="column" rowGap={0}>
-              {viewerHelp.map((help, index) => (
-                <Box key={index} justifyContent="space-between">
-                  <Text color="yellow" bold>
-                    {help.key}
+        {/* Right Column */}
+        <Box width="50%" flexDirection="column">
+          {sections.slice(2, 4).map((section, index) => (
+            <Box
+              key={index + 2}
+              borderStyle="round"
+              borderColor={
+                selectedSection === index + 2 ? (section.color as any) : 'gray'
+              }
+              paddingX={2}
+              paddingY={1}
+              marginBottom={1}
+              height="50%"
+            >
+              <Box flexDirection="column" width="100%">
+                <Box marginBottom={1}>
+                  <Text color={section.color as any} bold>
+                    {section.title}
                   </Text>
-                  <Text color="white">{help.action}</Text>
                 </Box>
-              ))}
+                <Box flexDirection="column">
+                  {section.items.map((item, itemIndex) => (
+                    <Box
+                      key={itemIndex}
+                      justifyContent="space-between"
+                      marginBottom={0}
+                    >
+                      <Text color="yellow" bold>
+                        {item.key.padEnd(12)}
+                      </Text>
+                      <Text color="white">{item.action}</Text>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
             </Box>
-          </Box>
+          ))}
         </Box>
       </Box>
 
       {/* Footer */}
-      <Box marginTop={2} justifyContent="center">
-        <Text color="gray" dimColor>
-          Press ESC or q to return to dashboard • github.com/Vasudevshetty/docu
-        </Text>
+      <Box borderStyle="round" borderColor="gray" paddingX={2} paddingY={1}>
+        <Box flexDirection="column" width="100%">
+          <Box justifyContent="center" marginBottom={1}>
+            <Text color="cyan" bold>
+              💡 Pro Tips
+            </Text>
+          </Box>
+          <Box flexDirection="row" justifyContent="space-between">
+            <Box flexDirection="column">
+              <Text color="gray">
+                • Numbers 1-4 work globally for quick navigation
+              </Text>
+              <Text color="gray">
+                • ESC always takes you back or to Dashboard
+              </Text>
+              <Text color="gray">
+                • TAB cycles through modes and focus areas
+              </Text>
+            </Box>
+            <Box flexDirection="column">
+              <Text color="gray">
+                • Search supports natural language queries
+              </Text>
+              <Text color="gray">
+                • Install multiple docsets for comprehensive coverage
+              </Text>
+              <Text color="gray">
+                • Use specific docset filters for targeted searches
+              </Text>
+            </Box>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
