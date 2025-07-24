@@ -1,7 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { SearchDocs } from '../core/SearchDocs';
-import { Banner } from '../utils/Banner';
+import { SearchDocs } from '../core/SearchDocs.js';
+import { Banner } from '../utils/Banner.js';
+import readline from 'readline';
 
 export const interactiveCommand = new Command('interactive')
   .alias('i')
@@ -21,7 +22,6 @@ export const interactiveCommand = new Command('interactive')
     const searcher = new SearchDocs();
 
     // Simple readline interface for interactive mode
-    const readline = require('readline');
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,

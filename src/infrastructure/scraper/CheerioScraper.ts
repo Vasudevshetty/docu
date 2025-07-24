@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { DocContent } from '../../domain/Docset';
+import { DocContent } from '../../domain/Docset.js';
 
 export interface ScrapeRules {
   entryPoints: string[];

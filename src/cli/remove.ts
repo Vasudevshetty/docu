@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { RemoveDocs } from '../core/RemoveDocs';
+import { RemoveDocs } from '../core/RemoveDocs.js';
 
 export const removeCommand = new Command('remove')
   .description('Remove a cached docset')

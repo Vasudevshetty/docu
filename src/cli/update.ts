@@ -1,8 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { FetchDocs } from '../core/FetchDocs';
-import { ListDocs } from '../core/ListDocs';
+import { FetchDocs } from '../core/FetchDocs.js';
+import { ListDocs } from '../core/ListDocs.js';
 
 export const updateCommand = new Command('update')
   .description('Update cached docsets with latest content')

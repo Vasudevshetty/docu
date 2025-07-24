@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import docsets from '../config/docsets.json';
-import { DocsetConfig } from '../domain/Docset';
+import docsets from '../config/docsets.json' with { type: 'json' };
+import { DocsetConfig } from '../domain/Docset.js';
 
 export function setupAvailableCommand(program: Command): void {
   program

@@ -1,19 +1,20 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { fetchCommand } from '../src/cli/fetch';
-import { searchCommand } from '../src/cli/search';
-import { listCommand } from '../src/cli/list';
-import { removeCommand } from '../src/cli/remove';
-import { setupAvailableCommand } from '../src/cli/available';
-import { interactiveCommand } from '../src/cli/interactive';
-import { exportCommand } from '../src/cli/export';
-import { explainCommand } from '../src/cli/explain';
-import { quickCommand } from '../src/cli/quick';
-import { copyCommand } from '../src/cli/copy';
-import { updateCommand } from '../src/cli/update';
-import { setupCommand } from '../src/cli/setup';
-import { Banner } from '../src/utils/Banner';
+import { fetchCommand } from '../src/cli/fetch.js';
+import { searchCommand } from '../src/cli/search.js';
+import { listCommand } from '../src/cli/list.js';
+import { removeCommand } from '../src/cli/remove.js';
+import { setupAvailableCommand } from '../src/cli/available.js';
+import { interactiveCommand } from '../src/cli/interactive.js';
+import { exportCommand } from '../src/cli/export.js';
+import { explainCommand } from '../src/cli/explain.js';
+import { quickCommand } from '../src/cli/quick.js';
+import { copyCommand } from '../src/cli/copy.js';
+import { updateCommand } from '../src/cli/update.js';
+import { setupCommand } from '../src/cli/setup.js';
+import { tuiCommand } from '../src/cli/tui.js';
+import { Banner } from '../src/utils/Banner.js';
 
 const program = new Command();
 
@@ -44,6 +45,7 @@ program.addCommand(updateCommand);
 
 // Enhanced commands
 program.addCommand(interactiveCommand);
+program.addCommand(tuiCommand);
 program.addCommand(exportCommand);
 setupAvailableCommand(program);
 

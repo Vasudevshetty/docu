@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { ListDocs } from '../core/ListDocs';
+import { ListDocs } from '../core/ListDocs.js';
 
 export const listCommand = new Command('list')
   .description('List all cached docsets')

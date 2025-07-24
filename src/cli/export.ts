@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SearchDocs } from '../core/SearchDocs';
+import { SearchDocs } from '../core/SearchDocs.js';
 
 export const exportCommand = new Command('export')
   .description('Export search results to a file')

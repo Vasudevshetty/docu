@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
-import { DocContent } from '../../domain/Docset';
-import { SearchResult, SearchOptions } from '../../domain/Search';
-import { FileSystemAdapter } from '../storage/FileSystemAdapter';
+import { DocContent } from '../../domain/Docset.js';
+import { SearchResult, SearchOptions } from '../../domain/Search.js';
+import { FileSystemAdapter } from '../storage/FileSystemAdapter.js';
 
 export class SQLiteIndexer {
   private db: Database.Database | null = null;

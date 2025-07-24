@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { SearchDocs } from '../core/SearchDocs';
-import { GroqService } from '../services/GroqService';
+import { SearchDocs } from '../core/SearchDocs.js';
+import { GroqService } from '../services/GroqService.js';
 import ora from 'ora';
 
 export const quickCommand = new Command('quick')

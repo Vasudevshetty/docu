@@ -1,5 +1,5 @@
-import { SQLiteIndexer } from '../infrastructure/indexer/SQLiteIndexer';
-import { SearchResult, SearchOptions } from '../domain/Search';
+import { SQLiteIndexer } from '../infrastructure/indexer/SQLiteIndexer.js';
+import { SearchResult, SearchOptions } from '../domain/Search.js';
 
 export class SearchDocs {
   private readonly indexer: SQLiteIndexer;

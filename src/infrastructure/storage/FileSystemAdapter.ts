@@ -1,7 +1,7 @@
 import path from 'path';
 import os from 'os';
 import fs from 'fs/promises';
-import { DocsetMetadata, Docset } from '../../domain/Docset';
+import { DocsetMetadata, Docset } from '../../domain/Docset.js';
 
 export class FileSystemAdapter {
   private readonly docuDir: string;

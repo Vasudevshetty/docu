@@ -1,8 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { SearchDocs } from '../core/SearchDocs';
-import { GroqService } from '../services/GroqService';
-import { MarkdownPager } from '../utils/MarkdownPager';
+import { SearchDocs } from '../core/SearchDocs.js';
+import { GroqService } from '../services/GroqService.js';
+import { MarkdownPager } from '../utils/MarkdownPager.js';
 import ora from 'ora';
 
 export const explainCommand = new Command('explain')

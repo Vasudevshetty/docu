@@ -1,5 +1,5 @@
-import { FileSystemAdapter } from '../infrastructure/storage/FileSystemAdapter';
-import { SQLiteIndexer } from '../infrastructure/indexer/SQLiteIndexer';
+import { FileSystemAdapter } from '../infrastructure/storage/FileSystemAdapter.js';
+import { SQLiteIndexer } from '../infrastructure/indexer/SQLiteIndexer.js';
 
 export class RemoveDocs {
   private readonly storage: FileSystemAdapter;

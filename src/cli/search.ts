@@ -1,9 +1,9 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { SearchDocs } from '../core/SearchDocs';
-import { MarkdownPager } from '../utils/MarkdownPager';
-import { GroqService } from '../services/GroqService';
-import { SmartFetch } from '../utils/SmartFetch';
+import { SearchDocs } from '../core/SearchDocs.js';
+import { MarkdownPager } from '../utils/MarkdownPager.js';
+import { GroqService } from '../services/GroqService.js';
+import { SmartFetch } from '../utils/SmartFetch.js';
 import ora from 'ora';
 
 function generateMarkdownOutput(

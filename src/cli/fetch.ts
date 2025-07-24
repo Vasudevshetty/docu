@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { FetchDocs } from '../core/FetchDocs';
+import { FetchDocs } from '../core/FetchDocs.js';
 
 export const fetchCommand = new Command('fetch')
   .description('Fetch and cache documentation for a specific docset')

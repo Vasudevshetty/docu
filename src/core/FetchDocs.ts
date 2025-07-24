@@ -1,11 +1,11 @@
 import {
   CheerioScraper,
   ScrapeRules,
-} from '../infrastructure/scraper/CheerioScraper';
-import { SQLiteIndexer } from '../infrastructure/indexer/SQLiteIndexer';
-import { FileSystemAdapter } from '../infrastructure/storage/FileSystemAdapter';
-import { DocsetMetadata, DocContent } from '../domain/Docset';
-import docsets from '../config/docsets.json';
+} from '../infrastructure/scraper/CheerioScraper.js';
+import { SQLiteIndexer } from '../infrastructure/indexer/SQLiteIndexer.js';
+import { FileSystemAdapter } from '../infrastructure/storage/FileSystemAdapter.js';
+import { DocsetMetadata, DocContent } from '../domain/Docset.js';
+import docsets from '../config/docsets.json' with { type: 'json' };
 
 export class FetchDocs {
   private readonly scraper: CheerioScraper;

@@ -1,5 +1,5 @@
-import { FileSystemAdapter } from '../infrastructure/storage/FileSystemAdapter';
-import { Docset } from '../domain/Docset';
+import { FileSystemAdapter } from '../infrastructure/storage/FileSystemAdapter.js';
+import { Docset } from '../domain/Docset.js';
 
 export class ListDocs {
   private readonly storage: FileSystemAdapter;
@@ -24,7 +24,9 @@ export class ListDocs {
 
   async getAvailableDocsets(): Promise<string[]> {
     // This would list all supported docsets from config
-    const docsets = await import('../config/docsets.json');
+    const docsets = await import('../config/docsets.json', {
+      with: { type: 'json' },
+    });
     return docsets.default.map((d: any) => d.name);
   }
 }

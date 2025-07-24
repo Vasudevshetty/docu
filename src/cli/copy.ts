@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { SearchDocs } from '../core/SearchDocs';
+import { SearchDocs } from '../core/SearchDocs.js';
 
 export const copyCommand = new Command('copy')
   .alias('cp')
@@ -122,7 +122,7 @@ function Welcome({ name, age }) {
 // Usage
 <Welcome name="Alice" age={25} />`,
 
-    express: `const express = require('express');
+    express: `import express from 'express';
 const app = express();
 
 // Middleware

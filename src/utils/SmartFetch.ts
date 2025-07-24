@@ -1,5 +1,5 @@
-import { SearchDocs } from '../core/SearchDocs';
-import { FetchDocs } from '../core/FetchDocs';
+import { SearchDocs } from '../core/SearchDocs.js';
+import { FetchDocs } from '../core/FetchDocs.js';
 import chalk from 'chalk';
 
 export class SmartFetch {
