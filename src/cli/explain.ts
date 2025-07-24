@@ -84,12 +84,14 @@ export const explainCommand = new Command('explain')
           });
         }
 
-        // Display with pager if requested
+        // Display with pager if requested, otherwise use markdown rendering
         if (options.pager) {
           const pager = new MarkdownPager(output);
           await pager.display();
         } else {
-          console.log(output);
+          // Render markdown directly to console
+          const pager = new MarkdownPager(output);
+          console.log(pager.formatMarkdown(output));
         }
       } catch (error) {
         console.error(

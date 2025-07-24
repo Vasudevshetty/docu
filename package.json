@@ -1,6 +1,6 @@
 {
   "name": "@vasudevshetty/docu-cli",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Blazing-fast, AI-powered CLI to fetch, cache, and search developer docs right from your terminal with smart explanations",
   "main": "dist/bin/index.js",
   "bin": {

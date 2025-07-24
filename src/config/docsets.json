@@ -24,7 +24,10 @@
         "https://react.dev/learn/describing-the-ui",
         "https://react.dev/learn/adding-interactivity",
         "https://react.dev/learn/managing-state",
-        "https://react.dev/learn/escape-hatches"
+        "https://react.dev/learn/escape-hatches",
+        "https://react.dev/blog",
+        "https://react.dev/community",
+        "https://react.dev/faq"
       ],
       "selectors": {
         "title": "h1, h2, h3, h4",
@@ -38,7 +41,13 @@
     "description": "Vue.js Documentation",
     "baseUrl": "https://vuejs.org",
     "scrapeRules": {
-      "entryPoints": ["https://vuejs.org/guide/", "https://vuejs.org/api/"],
+      "entryPoints": [
+        "https://vuejs.org/guide/",
+        "https://vuejs.org/api/",
+        "https://vuejs.org/examples/",
+        "https://vuejs.org/tutorial/",
+        "https://vuejs.org/faq/"
+      ],
       "selectors": {
         "title": "h1, h2, h3",
         "content": ".VPContent, main, article",
@@ -51,7 +60,13 @@
     "description": "Angular Documentation",
     "baseUrl": "https://angular.io",
     "scrapeRules": {
-      "entryPoints": ["https://angular.io/guide", "https://angular.io/api"],
+      "entryPoints": [
+        "https://angular.io/guide",
+        "https://angular.io/api",
+        "https://angular.io/tutorial",
+        "https://angular.io/cli",
+        "https://angular.io/errors"
+      ],
       "selectors": {
         "title": "h1, h2, h3",
         "content": ".docs-content, article, main",
@@ -64,7 +79,12 @@
     "description": "Node.js Documentation",
     "baseUrl": "https://nodejs.org/api",
     "scrapeRules": {
-      "entryPoints": ["https://nodejs.org/api/"],
+      "entryPoints": [
+        "https://nodejs.org/api/",
+        "https://nodejs.org/en/docs/guides/",
+        "https://nodejs.org/en/docs/tutorials/",
+        "https://nodejs.org/en/docs/faq/"
+      ],
       "selectors": {
         "title": "h1, h2, h3",
         "content": "#content, .api-docs",
@@ -79,12 +99,19 @@
     "scrapeRules": {
       "entryPoints": [
         "https://expressjs.com/en/4x/api.html",
-        "https://expressjs.com/en/guide/"
+        "https://expressjs.com/en/starter/installing.html",
+        "https://expressjs.com/en/starter/hello-world.html",
+        "https://expressjs.com/en/guide/routing.html",
+        "https://expressjs.com/en/guide/writing-middleware.html",
+        "https://expressjs.com/en/guide/error-handling.html",
+        "https://expressjs.com/en/guide/using-middleware.html",
+        "https://expressjs.com/en/resources/middleware.html",
+        "https://expressjs.com/en/resources/faq.html"
       ],
       "selectors": {
         "title": "h1, h2, h3",
-        "content": "#page-doc, .page-content, main",
-        "exclude": "nav, footer, .sidebar"
+        "content": "#page-doc, .page-content, main, .content",
+        "exclude": "nav, footer, .sidebar, .menu"
       }
     }
   },
@@ -95,7 +122,9 @@
     "scrapeRules": {
       "entryPoints": [
         "https://www.typescriptlang.org/docs/",
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/docs/handbook/",
+        "https://www.typescriptlang.org/docs/faq/",
+        "https://www.typescriptlang.org/docs/tutorials/"
       ],
       "selectors": {
         "title": "h1, h2, h3",
@@ -111,7 +140,10 @@
     "scrapeRules": {
       "entryPoints": [
         "https://docs.docker.com/get-started/",
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/reference/",
+        "https://docs.docker.com/engine/",
+        "https://docs.docker.com/compose/",
+        "https://docs.docker.com/desktop/"
       ],
       "selectors": {
         "title": "h1, h2, h3",
@@ -127,7 +159,10 @@
     "scrapeRules": {
       "entryPoints": [
         "https://docs.python.org/3/library/",
-        "https://docs.python.org/3/tutorial/"
+        "https://docs.python.org/3/tutorial/",
+        "https://docs.python.org/3/reference/",
+        "https://docs.python.org/3/howto/",
+        "https://docs.python.org/3/faq/"
       ],
       "selectors": {
         "title": "h1, h2, h3",
@@ -143,7 +178,9 @@
     "scrapeRules": {
       "entryPoints": [
         "https://docs.djangoproject.com/en/stable/topics/",
-        "https://docs.djangoproject.com/en/stable/ref/"
+        "https://docs.djangoproject.com/en/stable/ref/",
+        "https://docs.djangoproject.com/en/stable/faq/",
+        "https://docs.djangoproject.com/en/stable/releases/"
       ],
       "selectors": {
         "title": "h1, h2, h3",
@@ -159,12 +196,138 @@
     "scrapeRules": {
       "entryPoints": [
         "https://fastapi.tiangolo.com/tutorial/",
-        "https://fastapi.tiangolo.com/reference/"
+        "https://fastapi.tiangolo.com/reference/",
+        "https://fastapi.tiangolo.com/advanced/",
+        "https://fastapi.tiangolo.com/faq/"
       ],
       "selectors": {
         "title": "h1, h2, h3",
         "content": ".md-content, article, main",
         "exclude": "nav, footer, .md-sidebar"
+      }
+    }
+  },
+  {
+    "name": "nextjs",
+    "description": "Next.js Documentation",
+    "baseUrl": "https://nextjs.org",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://nextjs.org/docs",
+        "https://nextjs.org/docs/getting-started/installation",
+        "https://nextjs.org/docs/app/building-your-application/routing",
+        "https://nextjs.org/docs/app/building-your-application/data-fetching",
+        "https://nextjs.org/docs/app/api-reference",
+        "https://nextjs.org/docs/pages/api-reference",
+        "https://nextjs.org/docs/pages/building-your-application"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": "main, article, .prose, [data-docs-content]",
+        "exclude": "nav, footer, .sidebar, .nav-wrapper"
+      }
+    }
+  },
+  {
+    "name": "tailwind",
+    "description": "Tailwind CSS Documentation",
+    "baseUrl": "https://tailwindcss.com",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://tailwindcss.com/docs",
+        "https://tailwindcss.com/docs/installation",
+        "https://tailwindcss.com/docs/utility-first",
+        "https://tailwindcss.com/docs/responsive-design",
+        "https://tailwindcss.com/docs/flexbox-and-grid",
+        "https://tailwindcss.com/docs/configuration",
+        "https://tailwindcss.com/docs/customizing-colors"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": "main, article, .prose",
+        "exclude": "nav, footer, .sidebar"
+      }
+    }
+  },
+  {
+    "name": "javascript",
+    "description": "MDN JavaScript Documentation",
+    "baseUrl": "https://developer.mozilla.org",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": ".main-page-content, article, main",
+        "exclude": "nav, footer, .sidebar, .breadcrumbs"
+      }
+    }
+  },
+  {
+    "name": "mysql",
+    "description": "MySQL Documentation",
+    "baseUrl": "https://dev.mysql.com/doc",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://dev.mysql.com/doc/refman/8.0/en/",
+        "https://dev.mysql.com/doc/refman/8.0/en/sql-statements.html",
+        "https://dev.mysql.com/doc/refman/8.0/en/functions.html",
+        "https://dev.mysql.com/doc/refman/8.0/en/tutorial.html",
+        "https://dev.mysql.com/doc/refman/8.0/en/faq.html"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": ".section, .refentry, main",
+        "exclude": "nav, footer, .navheader, .navfooter"
+      }
+    }
+  },
+  {
+    "name": "redis",
+    "description": "Redis Documentation",
+    "baseUrl": "https://redis.io/docs",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://redis.io/docs/",
+        "https://redis.io/docs/latest/commands/",
+        "https://redis.io/docs/latest/develop/",
+        "https://redis.io/docs/latest/clients/",
+        "https://redis.io/docs/latest/faq/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": "main, article, .prose",
+        "exclude": "nav, footer, .sidebar"
+      }
+    }
+  },
+  {
+    "name": "git",
+    "description": "Git Documentation",
+    "baseUrl": "https://git-scm.com/docs",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://git-scm.com/docs",
+        "https://git-scm.com/docs/git",
+        "https://git-scm.com/docs/git-clone",
+        "https://git-scm.com/docs/git-commit",
+        "https://git-scm.com/docs/git-push",
+        "https://git-scm.com/docs/git-pull",
+        "https://git-scm.com/docs/git-merge",
+        "https://git-scm.com/docs/git-rebase"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": "#main, .sect1, article",
+        "exclude": "nav, footer, .sidebar"
       }
     }
   }
