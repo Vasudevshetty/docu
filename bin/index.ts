@@ -21,7 +21,7 @@ program
   .description(
     'Blazing-fast, offline-first CLI to fetch, cache, and search developer docs'
   )
-  .version('0.2.0');
+  .version('0.3.1');
 
 // Core commands
 program.addCommand(fetchCommand);

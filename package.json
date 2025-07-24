@@ -1,6 +1,6 @@
 {
   "name": "@vasudevshetty/docu-cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Blazing-fast, AI-powered CLI to fetch, cache, and search developer docs right from your terminal with smart explanations",
   "main": "dist/bin/index.js",
   "bin": {
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Vasudevshetty/docu.git"
+    "url": "git+https://github.com/Vasudevshetty/docu.git"
   },
   "homepage": "https://github.com/Vasudevshetty/docu#readme",
   "bugs": {
