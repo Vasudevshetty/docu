@@ -4,11 +4,32 @@
     "description": "React Documentation",
     "baseUrl": "https://react.dev",
     "scrapeRules": {
-      "entryPoints": ["https://react.dev/learn", "https://react.dev/reference"],
+      "entryPoints": [
+        "https://react.dev/learn",
+        "https://react.dev/reference",
+        "https://react.dev/reference/react",
+        "https://react.dev/reference/react/useState",
+        "https://react.dev/reference/react/useEffect",
+        "https://react.dev/reference/react/useContext",
+        "https://react.dev/reference/react/useReducer",
+        "https://react.dev/reference/react/useMemo",
+        "https://react.dev/reference/react/useCallback",
+        "https://react.dev/reference/react/useRef",
+        "https://react.dev/reference/react/Component",
+        "https://react.dev/reference/react/PureComponent",
+        "https://react.dev/reference/react/createElement",
+        "https://react.dev/reference/react/createContext",
+        "https://react.dev/learn/thinking-in-react",
+        "https://react.dev/learn/tutorial-tic-tac-toe",
+        "https://react.dev/learn/describing-the-ui",
+        "https://react.dev/learn/adding-interactivity",
+        "https://react.dev/learn/managing-state",
+        "https://react.dev/learn/escape-hatches"
+      ],
       "selectors": {
-        "title": "h1, h2, h3",
-        "content": "main, article, .content",
-        "exclude": "nav, footer, .sidebar"
+        "title": "h1, h2, h3, h4",
+        "content": "main, article, .content, [data-docs-content]",
+        "exclude": "nav, footer, .sidebar, .nav-wrapper, .breadcrumbs, .page-nav"
       }
     }
   },

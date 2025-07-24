@@ -52,7 +52,7 @@ export class CheerioScraper {
     const mainContent = $(rules.selectors.content).first();
     if (mainContent.length > 0) {
       const headings = this.extractHeadings($, rules.selectors.title);
-      const content = this.extractCleanText(mainContent);
+      const content = this.extractCleanText($, mainContent);
 
       if (content.trim().length > 0) {
         docs.push({
@@ -82,7 +82,10 @@ export class CheerioScraper {
     return headings;
   }
 
-  private extractCleanText(element: cheerio.Cheerio<any>): string {
+  private extractCleanText(
+    $: cheerio.CheerioAPI,
+    element: cheerio.Cheerio<any>
+  ): string {
     // Remove unwanted elements first
     const $elem = element.clone();
     $elem
@@ -96,7 +99,7 @@ export class CheerioScraper {
 
     // Process each child element to maintain structure
     $elem.children().each((_, child) => {
-      const $child = element.constructor(child);
+      const $child = $(child);
       const tagName = child.name?.toLowerCase();
 
       switch (tagName) {

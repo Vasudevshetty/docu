@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { SearchDocs } from '../core/SearchDocs';
 import { MarkdownPager } from '../utils/MarkdownPager';
 import { GroqService } from '../services/GroqService';
+import { SmartFetch } from '../utils/SmartFetch';
 import ora from 'ora';
 
 function generateMarkdownOutput(
@@ -85,7 +86,9 @@ function generateTableOutput(
 }
 
 export const searchCommand = new Command('search')
-  .description('Search through cached documentation with AI insights')
+  .description(
+    'Search through cached documentation with AI insights and smart fetch suggestions'
+  )
   .argument('<query>', 'Search query')
   .option('-d, --docset <docset>', 'Limit search to specific docset')
   .option('-l, --limit <number>', 'Maximum number of results', '10')
@@ -98,6 +101,7 @@ export const searchCommand = new Command('search')
   )
   .option('--ai', 'Enable AI-powered explanations and insights')
   .option('--pager', 'Display results in a paginated viewer')
+  .option('--smart', 'Use smart fetch suggestions if no results found')
   .action(
     async (
       query: string,
@@ -109,15 +113,24 @@ export const searchCommand = new Command('search')
         format?: string;
         ai?: boolean;
         pager?: boolean;
+        smart?: boolean;
       }
     ) => {
       try {
-        const searcher = new SearchDocs();
-        const results = await searcher.search(query, {
-          docset: options.docset,
-          limit: parseInt(options.limit || '10', 10),
-          minScore: parseFloat(options.minScore || '0.000001'),
-        });
+        let results;
+
+        // Use smart fetch if enabled
+        if (options.smart) {
+          const smartFetch = new SmartFetch();
+          results = await smartFetch.searchWithSuggestedFetch(query);
+        } else {
+          const searcher = new SearchDocs();
+          results = await searcher.search(query, {
+            docset: options.docset,
+            limit: parseInt(options.limit || '10', 10),
+            minScore: parseFloat(options.minScore || '0.000001'),
+          });
+        }
 
         if (results.length === 0) {
           console.log(chalk.yellow(`No results found for "${query}"`));

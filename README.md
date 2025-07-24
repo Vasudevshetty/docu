@@ -1,6 +1,26 @@
 # 📚 docu-cli – AI-Powered Offline Documentation CLI
 
-> Blazing-fast, AI-enhanced CLI to fetch, cache, and search developer docs with smart explanations and paginated display - right from your terminal.
+> Blazing-fast, AI-enhanced CLI to fetch, cache,## 🤖 AI Integration
+
+### Quick Setup
+
+```bash
+# Interactive setup (recommended)
+docu setup
+```
+
+### Manual Setup
+
+1. Get your free API key from [Groq Console](https://console.groq.com/)
+2. Configure using setup command or manually create config:
+
+````bash
+# Using setup command
+docu setup
+
+# Or manually in ~/.docu/.env
+echo "GROQ_API_KEY=your_api_key_here" > ~/.docu/.env
+```veloper docs with smart explanations and paginated display - right from your terminal.
 
 ---
 
@@ -37,6 +57,53 @@
 - 📦 **DevOps Integration**: Embed in containers and development environments
 - 🎓 **Learning Enhancement**: AI-powered explanations for complex concepts
 - 🔍 **Knowledge Base**: Personal offline documentation archive with smart search
+
+---
+
+## 📦 Installation
+
+### NPM Installation (Recommended)
+
+```bash
+# Install globally from npm
+npm install -g @vasudevshetty/docu-cli
+
+# Verify installation
+docu --version
+
+# Quick setup with AI features (optional)
+docu setup
+````
+
+### From Source
+
+```bash
+# Clone the repository
+git clone https://github.com/Vasudevshetty/docu.git
+cd docu
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Install globally
+npm install -g .
+```
+
+### First Time Setup
+
+```bash
+# Setup API key for AI features (optional)
+docu setup
+
+# Fetch your first docset
+docu fetch react
+
+# Start searching
+docu search "useState"
+```
 
 ---
 

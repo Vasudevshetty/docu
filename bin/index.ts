@@ -12,6 +12,7 @@ import { explainCommand } from '../src/cli/explain';
 import { quickCommand } from '../src/cli/quick';
 import { copyCommand } from '../src/cli/copy';
 import { updateCommand } from '../src/cli/update';
+import { setupCommand } from '../src/cli/setup';
 
 const program = new Command();
 
@@ -38,6 +39,9 @@ setupAvailableCommand(program);
 program.addCommand(explainCommand);
 program.addCommand(quickCommand);
 program.addCommand(copyCommand);
+
+// Setup and configuration
+program.addCommand(setupCommand);
 
 // Parse arguments
 program.parse(process.argv);

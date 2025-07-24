@@ -1,8 +1,9 @@
 import Groq from 'groq-sdk';
 import * as dotenv from 'dotenv';
 import chalk from 'chalk';
-
-dotenv.config();
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 
 export interface GroqConfig {
   apiKey: string;
@@ -34,13 +35,26 @@ export class GroqService {
   }
 
   static fromEnv(): GroqService {
+    // Try to load from home directory first, then local .env
+    const homePath = path.join(os.homedir(), '.docu', '.env');
+    const localPath = '.env';
+
+    // Load home config if exists
+    if (fs.existsSync(homePath)) {
+      dotenv.config({ path: homePath });
+    } else {
+      // Fallback to local .env
+      dotenv.config({ path: localPath });
+    }
+
     const apiKey = process.env.GROQ_API_KEY;
 
-    if (!apiKey) {
+    if (!apiKey || apiKey === 'your_api_key_here') {
       throw new Error(
-        chalk.red('❌ GROQ_API_KEY not found in environment variables.\n') +
-          chalk.yellow('Please add your Groq API key to a .env file:\n') +
-          chalk.gray('GROQ_API_KEY=your_api_key_here')
+        chalk.red('❌ GROQ_API_KEY not configured.\n') +
+          chalk.yellow('Run `docu setup` to configure your API key, or\n') +
+          chalk.yellow('Get your API key from: https://console.groq.com/\n') +
+          chalk.gray('Then run: docu setup --groq-key YOUR_API_KEY')
       );
     }
 
@@ -129,7 +143,7 @@ Format as clean markdown. Keep it concise but practical for quick lookup.`;
 
   async enhanceSearchResults(query: string, results: any[]): Promise<string> {
     const resultsText = results
-      .map((r) => `${r.title}: ${r.content}`)
+      .map((r) => `${r.title}: ${r.content || r.snippet}`)
       .join('\n\n');
 
     const prompt = `Based on the search query "${query}" and the following documentation results, provide a helpful summary and guidance.
