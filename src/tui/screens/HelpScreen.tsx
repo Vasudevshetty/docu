@@ -89,7 +89,7 @@ export function HelpScreen({ onNavigate }: HelpScreenProps) {
         <Box flexDirection="column" width="100%">
           <Box justifyContent="center" marginBottom={1}>
             <Text color="cyan" bold>
-              docu-cli v0.3.3 - Help & Documentation
+              docu-cli v0.3.4 - Help & Documentation
             </Text>
           </Box>
           <Box justifyContent="center">

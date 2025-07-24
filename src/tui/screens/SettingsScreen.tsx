@@ -185,7 +185,7 @@ export function SettingsScreen({ onNavigate }: SettingsScreenProps) {
           </Box>
           <Box justifyContent="space-between">
             <Text color="gray">
-              Configure docu-cli preferences and API keys
+              Configure docu-cli v0.3.4 preferences and API keys
             </Text>
             <Text color="gray">s:Save • r:Reset • Enter:Edit</Text>
           </Box>

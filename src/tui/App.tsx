@@ -124,7 +124,7 @@ export default function App() {
         </Box>
         <Box marginBottom={0} justifyContent="center">
           <Text color="cyan" bold>
-            ║ docu-cli v0.3.3 ║
+            ║ docu-cli v0.3.4 ║
           </Text>
         </Box>
         <Box marginBottom={1} justifyContent="center">

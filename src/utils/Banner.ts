@@ -1,45 +1,33 @@
 import chalk from 'chalk';
 
 export class Banner {
-  static getAsciiArt(): string {
-    return `     ____   ____   ____  _   _ 
-    |  _ \\ / ___| / ___|| | | |
-    | | | | |    | |    | | | |
-    | |_| | |___ | |___ | |_| |
-    |____/ \\____| \\____| \\___/ 
+  static getAsciiArt(version: string = '0.3.4'): string {
+    return `
+    ███████╗  ██████╗  ██████╗ ██╗   ██╗
+    ██╔═══██╗██╔═══██╗██╔════╝ ██║   ██║
+    ██║   ██║██║   ██║██║      ██║   ██║
+    ██║   ██║██║   ██║██║      ██║   ██║
+    ███████╔╝╚██████╔╝╚██████║ ╚██████╔╝
+     ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝ 
 
-    📚 AI-Powered Offline Documentation CLI
-    by @vasudevshetty • github.com/Vasudevshetty/docu`;
+    docu v${version}
+    by Vasudevshetty • github.com/Vasudevshetty/docu
+    `;
   }
 
-  static show(): void {
+  static show(version: string = '0.3.4'): void {
     console.log();
-    console.log(chalk.cyan.bold('     ____   ____   ____  _   _ '));
-    console.log(chalk.cyan.bold('    |  _ \\ / ___| / ___|| | | |'));
-    console.log(chalk.cyan.bold('    | | | | |    | |    | | | |'));
-    console.log(chalk.cyan.bold('    | |_| | |___ | |___ | |_| |'));
-    console.log(chalk.cyan.bold('    |____/ \\____| \\____| \\___/ '));
-    console.log();
-    console.log(chalk.blue.bold('    📚 AI-Powered Offline Documentation CLI'));
-    console.log(
-      chalk.gray('    by @vasudevshetty • github.com/Vasudevshetty/docu')
-    );
+    console.log(chalk.cyan.bold(Banner.getAsciiArt(version)));
     console.log();
   }
 
-  static showSmall(): void {
+  static showSmall(version: string = '0.3.4'): void {
     console.log(
-      chalk.cyan.bold('📚 docu-cli') + chalk.gray(' by @vasudevshetty')
+      chalk.cyan.bold(`docu v${version}`) + chalk.gray(' by Vasudev Shetty')
     );
   }
 
   static showVersion(version: string): void {
-    console.log();
-    console.log(chalk.cyan.bold('📚 docu-cli') + chalk.gray(` v${version}`));
-    console.log(chalk.gray('AI-Powered Offline Documentation CLI'));
-    console.log(
-      chalk.gray('by @vasudevshetty • https://github.com/Vasudevshetty/docu')
-    );
-    console.log();
+    Banner.show(version);
   }
 }
