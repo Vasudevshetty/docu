@@ -43,7 +43,14 @@ export class FetchDocs {
     );
 
     if (docs.length === 0) {
-      throw new Error(`No documentation found for ${docsetName}`);
+      throw new Error(
+        `No documentation found for ${docsetName}. ` +
+          `This could be due to:\n` +
+          `  • Website structure changes\n` +
+          `  • Network connectivity issues\n` +
+          `  • All URLs returning 404 errors\n` +
+          `Try again later or check the docset configuration.`
+      );
     }
 
     console.log(`Found ${docs.length} documents`);

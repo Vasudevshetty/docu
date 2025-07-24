@@ -95,9 +95,18 @@ export const explainCommand = new Command('explain')
         }
       } catch (error) {
         console.error(
-          chalk.red('🤖 Explanation failed:'),
-          error instanceof Error ? error.message : String(error)
+          chalk.red('❌ Explanation failed:'),
+          chalk.yellow(error instanceof Error ? error.message : String(error))
         );
+
+        console.log(chalk.gray('\n💡 Troubleshooting tips:'));
+        console.log(chalk.gray('  • Check your internet connection'));
+        console.log(chalk.gray('  • Verify your API key with: docu setup'));
+        console.log(chalk.gray('  • Try a simpler query'));
+        console.log(
+          chalk.gray('  • Use docu search instead for basic documentation')
+        );
+
         process.exit(1);
       }
     }

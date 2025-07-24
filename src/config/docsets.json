@@ -24,10 +24,7 @@
         "https://react.dev/learn/describing-the-ui",
         "https://react.dev/learn/adding-interactivity",
         "https://react.dev/learn/managing-state",
-        "https://react.dev/learn/escape-hatches",
-        "https://react.dev/blog",
-        "https://react.dev/community",
-        "https://react.dev/faq"
+        "https://react.dev/learn/escape-hatches"
       ],
       "selectors": {
         "title": "h1, h2, h3, h4",
@@ -327,6 +324,79 @@
       "selectors": {
         "title": "h1, h2, h3, h4",
         "content": "#main, .sect1, article",
+        "exclude": "nav, footer, .sidebar"
+      }
+    }
+  },
+  {
+    "name": "postgres",
+    "description": "PostgreSQL Documentation",
+    "baseUrl": "https://www.postgresql.org/docs",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://www.postgresql.org/docs/current/sql.html",
+        "https://www.postgresql.org/docs/current/sql-select.html",
+        "https://www.postgresql.org/docs/current/sql-insert.html",
+        "https://www.postgresql.org/docs/current/sql-update.html",
+        "https://www.postgresql.org/docs/current/sql-delete.html",
+        "https://www.postgresql.org/docs/current/functions.html"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": ".docContent, .sect1, main",
+        "exclude": "nav, footer, .navheader, .navfooter"
+      }
+    }
+  },
+  {
+    "name": "mongodb",
+    "description": "MongoDB Documentation",
+    "baseUrl": "https://docs.mongodb.com",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://docs.mongodb.com/manual/",
+        "https://docs.mongodb.com/manual/tutorial/",
+        "https://docs.mongodb.com/manual/reference/",
+        "https://docs.mongodb.com/manual/crud/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": ".main-column, .body, article",
+        "exclude": "nav, footer, .sidebar"
+      }
+    }
+  },
+  {
+    "name": "aws",
+    "description": "AWS CLI Documentation",
+    "baseUrl": "https://docs.aws.amazon.com",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://docs.aws.amazon.com/cli/latest/userguide/",
+        "https://docs.aws.amazon.com/cli/latest/reference/",
+        "https://awscli.amazonaws.com/v2/documentation/api/latest/index.html"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": ".main-col-body, .documentation, main",
+        "exclude": "nav, footer, .sidebar"
+      }
+    }
+  },
+  {
+    "name": "kubernetes",
+    "description": "Kubernetes Documentation",
+    "baseUrl": "https://kubernetes.io/docs",
+    "scrapeRules": {
+      "entryPoints": [
+        "https://kubernetes.io/docs/concepts/",
+        "https://kubernetes.io/docs/reference/kubectl/",
+        "https://kubernetes.io/docs/tasks/",
+        "https://kubernetes.io/docs/tutorials/"
+      ],
+      "selectors": {
+        "title": "h1, h2, h3, h4",
+        "content": ".td-content, main, article",
         "exclude": "nav, footer, .sidebar"
       }
     }

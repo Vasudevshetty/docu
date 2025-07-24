@@ -17,56 +17,119 @@ export class CheerioScraper {
     rules: ScrapeRules
   ): Promise<DocContent[]> {
     const docs: DocContent[] = [];
+    let successCount = 0;
+    let errorCount = 0;
 
-    for (const entryPoint of rules.entryPoints) {
+    console.log(`📄 Scraping ${rules.entryPoints.length} pages...`);
+
+    for (let i = 0; i < rules.entryPoints.length; i++) {
+      const entryPoint = rules.entryPoints[i];
       try {
         const pageResults = await this.scrapePage(entryPoint, rules);
         docs.push(...pageResults);
+
+        if (pageResults.length > 0) {
+          successCount++;
+          console.log(
+            `✅ ${i + 1}/${rules.entryPoints.length}: ${pageResults.length} docs from ${this.shortenUrl(entryPoint)}`
+          );
+        } else {
+          console.log(
+            `⚪ ${i + 1}/${rules.entryPoints.length}: No content from ${this.shortenUrl(entryPoint)}`
+          );
+        }
       } catch (error) {
-        console.warn(`Failed to scrape ${entryPoint}:`, error);
+        errorCount++;
+        console.warn(
+          `❌ ${i + 1}/${rules.entryPoints.length}: Failed to scrape ${this.shortenUrl(entryPoint)}`
+        );
       }
     }
 
+    console.log(
+      `\n📊 Scraping completed: ${successCount} successful, ${errorCount} errors, ${docs.length} total documents`
+    );
     return docs;
+  }
+
+  private shortenUrl(url: string): string {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.pathname;
+    } catch {
+      return url;
+    }
   }
 
   private async scrapePage(
     url: string,
     rules: ScrapeRules
   ): Promise<DocContent[]> {
-    const response = await axios.get(url, {
-      timeout: 10000,
-      headers: {
-        'User-Agent': 'docu-cli/1.0.0 (Documentation Scraper)',
-      },
-    });
+    try {
+      const response = await axios.get(url, {
+        timeout: 10000,
+        headers: {
+          'User-Agent': 'docu-cli/1.0.0 (Documentation Scraper)',
+        },
+        validateStatus: (status) => {
+          // Accept 2xx status codes
+          return status >= 200 && status < 300;
+        },
+      });
 
-    const $ = cheerio.load(response.data);
+      const $ = cheerio.load(response.data);
 
-    // Remove excluded elements
-    $(rules.selectors.exclude).remove();
+      // Remove excluded elements
+      $(rules.selectors.exclude).remove();
 
-    const docs: DocContent[] = [];
+      const docs: DocContent[] = [];
 
-    // Extract main content
-    const mainContent = $(rules.selectors.content).first();
-    if (mainContent.length > 0) {
-      const headings = this.extractHeadings($, rules.selectors.title);
-      const content = this.extractCleanText($, mainContent);
+      // Extract main content
+      const mainContent = $(rules.selectors.content).first();
+      if (mainContent.length > 0) {
+        const headings = this.extractHeadings($, rules.selectors.title);
+        const content = this.extractCleanText($, mainContent);
 
-      if (content.trim().length > 0) {
-        docs.push({
-          id: this.generateId(url),
-          title: headings[0] || this.extractTitleFromUrl(url),
-          url,
-          content,
-          headings,
-          lastUpdated: new Date(),
-        });
+        if (content.trim().length > 0) {
+          docs.push({
+            id: this.generateId(url),
+            title: headings[0] || this.extractTitleFromUrl(url),
+            url,
+            content,
+            headings,
+            lastUpdated: new Date(),
+          });
+        }
       }
-    }
 
-    return docs;
+      return docs;
+    } catch (error: any) {
+      // Handle different types of errors gracefully
+      if (error.response) {
+        // HTTP error (4xx, 5xx)
+        const status = error.response.status;
+        const statusText = error.response.statusText;
+
+        if (status === 404) {
+          console.warn(`⚠️  Page not found (404): ${url}`);
+        } else if (status >= 400 && status < 500) {
+          console.warn(`⚠️  Client error (${status}): ${url} - ${statusText}`);
+        } else if (status >= 500) {
+          console.warn(`⚠️  Server error (${status}): ${url} - ${statusText}`);
+        } else {
+          console.warn(`⚠️  HTTP error (${status}): ${url} - ${statusText}`);
+        }
+      } else if (error.code === 'ECONNABORTED') {
+        console.warn(`⏱️  Timeout scraping: ${url}`);
+      } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+        console.warn(`🌐 Network error scraping: ${url}`);
+      } else {
+        console.warn(`❌ Error scraping ${url}:`, error.message);
+      }
+
+      // Return empty array instead of throwing
+      return [];
+    }
   }
 
   private extractHeadings($: cheerio.CheerioAPI, selector: string): string[] {

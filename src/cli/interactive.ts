@@ -1,12 +1,16 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { SearchDocs } from '../core/SearchDocs';
+import { Banner } from '../utils/Banner';
 
 export const interactiveCommand = new Command('interactive')
   .alias('i')
   .description('Start interactive search mode')
   .option('-d, --docset <docset>', 'Limit search to specific docset')
   .action(async (options: { docset?: string }) => {
+    console.clear();
+    Banner.show();
+
     console.log(chalk.bold.blue('🔍 Interactive Search Mode'));
     console.log(
       chalk.gray(

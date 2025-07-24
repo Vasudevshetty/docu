@@ -13,15 +13,27 @@ import { quickCommand } from '../src/cli/quick';
 import { copyCommand } from '../src/cli/copy';
 import { updateCommand } from '../src/cli/update';
 import { setupCommand } from '../src/cli/setup';
+import { Banner } from '../src/utils/Banner';
 
 const program = new Command();
+
+// Show banner for help command or no arguments
+const args = process.argv.slice(2);
+if (
+  args.length === 0 ||
+  args[0] === 'help' ||
+  args[0] === '--help' ||
+  args[0] === '-h'
+) {
+  Banner.show();
+}
 
 program
   .name('docu')
   .description(
     'Blazing-fast, offline-first CLI to fetch, cache, and search developer docs'
   )
-  .version('0.3.2');
+  .version('0.3.3');
 
 // Core commands
 program.addCommand(fetchCommand);
