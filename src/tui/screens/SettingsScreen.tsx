@@ -123,57 +123,55 @@ export function SettingsScreen({ onNavigate }: SettingsScreenProps) {
   };
 
   return (
-    <Box flexDirection="column" paddingX={2} paddingY={1}>
-      {/* Header */}
-      <Box marginBottom={1}>
+    <Box flexDirection="column" paddingX={3} paddingY={2}>
+      {/* Clean Header */}
+      <Box marginBottom={2} justifyContent="space-between">
         <Text color="cyan" bold>
-          ⚙️ Settings
+          ⚙️ Configuration
+        </Text>
+        <Text color="green" dimColor>
+          Auto-saved
         </Text>
       </Box>
 
-      {/* Settings form */}
-      <Box
-        borderStyle="round"
-        paddingX={2}
-        paddingY={1}
-        flexDirection="column"
-        flexGrow={1}
-      >
-        <Box marginBottom={1}>
-          <Text color="white" bold>
-            🔧 Configuration
-          </Text>
-        </Box>
-
+      {/* Settings Cards */}
+      <Box flexDirection="column" flexGrow={1}>
         {fields.map((field, index) => (
           <Box
             key={field.key}
-            marginBottom={2}
-            paddingX={1}
-            borderStyle={index === selectedField ? 'single' : undefined}
-            borderColor={index === selectedField ? 'cyan' : undefined}
+            marginBottom={1}
+            paddingX={2}
+            paddingY={1}
+            borderStyle={index === selectedField ? 'single' : 'round'}
+            borderColor={index === selectedField ? 'cyan' : 'gray'}
             flexDirection="column"
           >
-            <Box marginBottom={1}>
-              <Text
-                color={index === selectedField ? 'cyan' : 'white'}
-                bold={index === selectedField}
-              >
-                {index === selectedField ? '▶ ' : '  '}
-                {field.label}
-              </Text>
+            {/* Field Header */}
+            <Box justifyContent="space-between" marginBottom={1}>
+              <Box>
+                <Text color={index === selectedField ? 'cyan' : 'white'} bold>
+                  {index === selectedField ? '▶ ' : '  '}
+                  {field.label}
+                </Text>
+              </Box>
+              <Box>
+                {field.type === 'boolean' && (
+                  <Text
+                    color={
+                      settings[field.key as keyof Settings] ? 'green' : 'red'
+                    }
+                  >
+                    {settings[field.key as keyof Settings] ? '●' : '○'}
+                  </Text>
+                )}
+              </Box>
             </Box>
 
-            <Box marginBottom={1} paddingLeft={2}>
-              <Text color="gray" dimColor>
-                {field.description}
-              </Text>
-            </Box>
-
-            <Box paddingLeft={2}>
+            {/* Field Value */}
+            <Box paddingLeft={3}>
               {editing && index === selectedField ? (
                 <Box>
-                  <Text color="white">Value: </Text>
+                  <Text color="cyan">❯ </Text>
                   <TextInput
                     value={editValue}
                     onChange={setEditValue}
@@ -185,37 +183,49 @@ export function SettingsScreen({ onNavigate }: SettingsScreenProps) {
                 <Text color="yellow">{getDisplayValue(field)}</Text>
               )}
             </Box>
+
+            {/* Field Description (only for selected) */}
+            {index === selectedField && (
+              <Box paddingLeft={3} marginTop={1}>
+                <Text color="gray" dimColor>
+                  {field.description}
+                </Text>
+              </Box>
+            )}
           </Box>
         ))}
       </Box>
 
-      {/* Actions */}
+      {/* Environment Status */}
       <Box
-        borderStyle="round"
+        marginTop={2}
+        borderStyle="single"
+        borderColor="gray"
         paddingX={2}
         paddingY={1}
-        marginTop={1}
-        flexDirection="column"
       >
-        <Box marginBottom={1}>
-          <Text color="white" bold>
-            💾 Actions
-          </Text>
+        <Box justifyContent="space-between">
+          <Text color="blue">Environment</Text>
+          <Text color="gray">{process.env.NODE_ENV || 'development'}</Text>
         </Box>
-
-        <Text color="green">✓ Settings are automatically saved</Text>
-
-        <Text color="gray" dimColor>
-          Note: Some settings may require restart to take effect
-        </Text>
+        <Box justifyContent="space-between">
+          <Text color="blue">Config Path</Text>
+          <Text color="gray">~/.docu/config.json</Text>
+        </Box>
       </Box>
 
-      {/* Help */}
-      <Box marginTop={1}>
-        <Text color="gray" dimColor>
+      {/* Clean Status Line */}
+      <Box
+        marginTop={2}
+        justifyContent="center"
+        borderStyle="single"
+        borderColor="gray"
+        paddingX={2}
+      >
+        <Text color="gray">
           {editing
             ? 'Enter: Save • ESC: Cancel'
-            : '↑↓: Navigate • Enter: Edit • Space: Toggle • ESC: Back'}
+            : '↑↓: Navigate • Enter: Edit • Space: Toggle Boolean • ESC: Back'}
         </Text>
       </Box>
     </Box>

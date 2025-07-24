@@ -98,102 +98,88 @@ export function DocsetBrowser({ onNavigate }: DocsetBrowserProps) {
   }
 
   return (
-    <Box flexDirection="column" paddingX={2} paddingY={1}>
-      {/* Header */}
-      <Box marginBottom={1}>
+    <Box flexDirection="column" paddingX={3} paddingY={2}>
+      {/* Clean Header with Tab Navigation */}
+      <Box marginBottom={2} justifyContent="space-between">
         <Text color="cyan" bold>
-          📚 Docset Browser
+          📚 Docset Manager
         </Text>
+        <Box gap={1}>
+          <Text
+            color={currentTab === 'installed' ? 'cyan' : 'gray'}
+            bold={currentTab === 'installed'}
+          >
+            [1] Installed ({installedDocsets.length})
+          </Text>
+          <Text color="gray">|</Text>
+          <Text
+            color={currentTab === 'available' ? 'cyan' : 'gray'}
+            bold={currentTab === 'available'}
+          >
+            [2] Available ({availableDocsets.length})
+          </Text>
+        </Box>
       </Box>
 
-      {/* Tabs */}
-      <Box marginBottom={1} gap={2}>
-        <Text
-          color={currentTab === 'installed' ? 'cyan' : 'gray'}
-          backgroundColor={currentTab === 'installed' ? 'blue' : undefined}
-          bold={currentTab === 'installed'}
-        >
-          {currentTab === 'installed' ? '▶ ' : '  '}
-          1. Installed ({installedDocsets.length})
-        </Text>
-        <Text
-          color={currentTab === 'available' ? 'cyan' : 'gray'}
-          backgroundColor={currentTab === 'available' ? 'blue' : undefined}
-          bold={currentTab === 'available'}
-        >
-          {currentTab === 'available' ? '▶ ' : '  '}
-          2. Available ({availableDocsets.length})
-        </Text>
-      </Box>
-
-      {/* Content */}
-      <Box
-        borderStyle="round"
-        paddingX={2}
-        paddingY={1}
-        flexDirection="column"
-        flexGrow={1}
-      >
+      {/* Content Area */}
+      <Box flexDirection="column" flexGrow={1}>
         {currentTab === 'installed' ? (
           installedDocsets.length > 0 ? (
-            <Box flexDirection="column">
-              <Box marginBottom={1}>
-                <Text color="white" bold>
-                  📦 Installed Docsets
-                </Text>
-              </Box>
-              {installedDocsets.map((docset, index) => (
-                <Box
-                  key={docset.name}
-                  marginBottom={1}
-                  paddingX={1}
-                  borderStyle={index === selectedIndex ? 'single' : undefined}
-                  borderColor={index === selectedIndex ? 'cyan' : undefined}
-                >
-                  <Box flexDirection="column" width="100%">
-                    <Text
-                      color={index === selectedIndex ? 'cyan' : 'white'}
-                      bold={index === selectedIndex}
-                    >
-                      {index === selectedIndex ? '▶ ' : '  '}
-                      {docset.name}
+            installedDocsets.map((docset, index) => (
+              <Box
+                key={docset.name}
+                marginBottom={1}
+                paddingX={2}
+                paddingY={1}
+                borderStyle={index === selectedIndex ? 'single' : 'round'}
+                borderColor={index === selectedIndex ? 'cyan' : 'gray'}
+                flexDirection="column"
+              >
+                {/* Docset Header */}
+                <Box justifyContent="space-between">
+                  <Text color={index === selectedIndex ? 'cyan' : 'white'} bold>
+                    {index === selectedIndex ? '▶ ' : '  '}
+                    {docset.name}
+                  </Text>
+                  <Text color="green">✓ Installed</Text>
+                </Box>
+
+                {/* Docset Stats (only for selected) */}
+                {index === selectedIndex && (
+                  <Box marginTop={1} justifyContent="space-between">
+                    <Text color="gray">
+                      📄 {docset.metadata?.totalDocs || 'Unknown'} docs
                     </Text>
-                    <Text color="gray" dimColor>
-                      Last updated:{' '}
+                    <Text color="gray">
+                      🕒{' '}
                       {docset.metadata?.lastFetched?.toLocaleDateString() ||
                         'Unknown'}
                     </Text>
-                    <Text color="gray" dimColor>
-                      Documents: {docset.metadata?.totalDocs || 'Unknown'}
-                    </Text>
                   </Box>
-                </Box>
-              ))}
-            </Box>
+                )}
+              </Box>
+            ))
           ) : (
-            <Box justifyContent="center" alignItems="center" height={10}>
+            <Box justifyContent="center" marginY={6}>
               <Box flexDirection="column" alignItems="center">
                 <Text color="yellow">📭 No docsets installed</Text>
                 <Text color="gray" dimColor>
-                  Switch to Available tab to see what you can install
+                  Press [2] to browse available docsets
                 </Text>
               </Box>
             </Box>
           )
         ) : availableDocsets.length > 0 ? (
           <Box flexDirection="column">
-            <Box marginBottom={1}>
-              <Text color="white" bold>
-                🌐 Available Docsets
-              </Text>
-            </Box>
             {availableDocsets.map((docsetName, index) => (
               <Box
                 key={docsetName}
-                marginBottom={1}
-                paddingX={1}
+                paddingX={2}
+                paddingY={0}
                 borderStyle={index === selectedIndex ? 'single' : undefined}
                 borderColor={index === selectedIndex ? 'cyan' : undefined}
+                justifyContent="space-between"
+                marginBottom={index === selectedIndex ? 0 : 0}
               >
                 <Text
                   color={index === selectedIndex ? 'cyan' : 'white'}
@@ -202,21 +188,47 @@ export function DocsetBrowser({ onNavigate }: DocsetBrowserProps) {
                   {index === selectedIndex ? '▶ ' : '  '}
                   {docsetName}
                 </Text>
+                <Text color="blue" dimColor>
+                  Download
+                </Text>
               </Box>
             ))}
           </Box>
         ) : (
-          <Box justifyContent="center" alignItems="center" height={10}>
-            <Text color="yellow">No available docsets found</Text>
+          <Box justifyContent="center" marginY={6}>
+            <Text color="yellow">🌐 No available docsets found</Text>
           </Box>
         )}
       </Box>
 
-      {/* Help */}
-      <Box marginTop={1}>
-        <Text color="gray" dimColor>
-          1/2: Switch tabs • ↑↓: Navigate • Enter: Select • R: Refresh • ESC:
-          Back
+      {/* Action Hint for Available Docsets */}
+      {currentTab === 'available' && availableDocsets.length > 0 && (
+        <Box
+          marginTop={2}
+          justifyContent="center"
+          borderStyle="single"
+          borderColor="blue"
+          paddingX={2}
+        >
+          <Text color="blue">
+            💡 To install: Run `docu fetch{' '}
+            {availableDocsets[selectedIndex] || 'docset-name'}` in terminal
+          </Text>
+        </Box>
+      )}
+
+      {/* Clean Status Line */}
+      <Box
+        marginTop={2}
+        justifyContent="center"
+        borderStyle="single"
+        borderColor="gray"
+        paddingX={2}
+      >
+        <Text color="gray">
+          1/2: Switch Tabs • ↑↓: Navigate • Enter:{' '}
+          {currentTab === 'installed' ? 'Search' : 'Show Install'} • R: Refresh
+          • ESC: Back
         </Text>
       </Box>
     </Box>

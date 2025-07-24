@@ -48,141 +48,117 @@ export function HelpScreen({ onNavigate }: HelpScreenProps) {
   ];
 
   return (
-    <Box flexDirection="column" paddingX={2} paddingY={1}>
+    <Box flexDirection="column" paddingX={3} paddingY={2}>
       {/* Header */}
-      <Box marginBottom={1}>
+      <Box marginBottom={2} justifyContent="center">
         <Text color="cyan" bold>
-          ❓ Help & Keyboard Shortcuts
+          docu-cli{' '}
         </Text>
+        <Text color="white">Help & Keyboard Shortcuts</Text>
       </Box>
 
-      {/* Global shortcuts */}
-      <Box
-        borderStyle="round"
-        paddingX={2}
-        paddingY={1}
-        marginBottom={1}
-        flexDirection="column"
-      >
-        <Box marginBottom={1}>
-          <Text color="white" bold>
-            🌐 Global Shortcuts
-          </Text>
-        </Box>
-
-        {shortcuts.map((shortcut, index) => (
-          <Box key={index} marginBottom={1}>
-            <Box width={15}>
-              <Text color="cyan" bold>
-                {shortcut.key}
-              </Text>
+      <Box flexDirection="row" columnGap={3}>
+        {/* Left Column - General & Search */}
+        <Box width="50%">
+          {/* General Shortcuts */}
+          <Box
+            borderStyle="round"
+            paddingX={2}
+            paddingY={1}
+            marginBottom={2}
+            flexDirection="column"
+          >
+            <Text color="cyan" bold>
+              🎯 General Shortcuts
+            </Text>
+            <Box marginTop={1} flexDirection="column" rowGap={0}>
+              {shortcuts.map((shortcut, index) => (
+                <Box key={index} justifyContent="space-between">
+                  <Text color="yellow" bold>
+                    {shortcut.key}
+                  </Text>
+                  <Text color="white">{shortcut.action}</Text>
+                </Box>
+              ))}
             </Box>
-            <Text color="white">{shortcut.action}</Text>
           </Box>
-        ))}
-      </Box>
 
-      {/* Search shortcuts */}
-      <Box
-        borderStyle="round"
-        paddingX={2}
-        paddingY={1}
-        marginBottom={1}
-        flexDirection="column"
-      >
-        <Box marginBottom={1}>
-          <Text color="white" bold>
-            🔍 Search Screen
-          </Text>
-        </Box>
-
-        {searchHelp.map((shortcut, index) => (
-          <Box key={index} marginBottom={1}>
-            <Box width={15}>
-              <Text color="yellow" bold>
-                {shortcut.key}
-              </Text>
+          {/* Search Help */}
+          <Box
+            borderStyle="round"
+            paddingX={2}
+            paddingY={1}
+            flexDirection="column"
+          >
+            <Text color="green" bold>
+              🔍 Search Screen
+            </Text>
+            <Box marginTop={1} flexDirection="column" rowGap={0}>
+              {searchHelp.map((help, index) => (
+                <Box key={index} justifyContent="space-between">
+                  <Text color="yellow" bold>
+                    {help.key}
+                  </Text>
+                  <Text color="white">{help.action}</Text>
+                </Box>
+              ))}
             </Box>
-            <Text color="white">{shortcut.action}</Text>
           </Box>
-        ))}
-      </Box>
-
-      {/* Docset shortcuts */}
-      <Box
-        borderStyle="round"
-        paddingX={2}
-        paddingY={1}
-        marginBottom={1}
-        flexDirection="column"
-      >
-        <Box marginBottom={1}>
-          <Text color="white" bold>
-            📚 Docset Browser
-          </Text>
         </Box>
 
-        {docsetHelp.map((shortcut, index) => (
-          <Box key={index} marginBottom={1}>
-            <Box width={15}>
-              <Text color="green" bold>
-                {shortcut.key}
-              </Text>
+        {/* Right Column - Docsets & Viewer */}
+        <Box width="50%">
+          {/* Docset Help */}
+          <Box
+            borderStyle="round"
+            paddingX={2}
+            paddingY={1}
+            marginBottom={2}
+            flexDirection="column"
+          >
+            <Text color="blue" bold>
+              📚 Docset Browser
+            </Text>
+            <Box marginTop={1} flexDirection="column" rowGap={0}>
+              {docsetHelp.map((help, index) => (
+                <Box key={index} justifyContent="space-between">
+                  <Text color="yellow" bold>
+                    {help.key}
+                  </Text>
+                  <Text color="white">{help.action}</Text>
+                </Box>
+              ))}
             </Box>
-            <Text color="white">{shortcut.action}</Text>
           </Box>
-        ))}
-      </Box>
 
-      {/* Viewer shortcuts */}
-      <Box
-        borderStyle="round"
-        paddingX={2}
-        paddingY={1}
-        marginBottom={1}
-        flexDirection="column"
-      >
-        <Box marginBottom={1}>
-          <Text color="white" bold>
-            📖 Document Viewer
-          </Text>
-        </Box>
-
-        {viewerHelp.map((shortcut, index) => (
-          <Box key={index} marginBottom={1}>
-            <Box width={15}>
-              <Text color="blue" bold>
-                {shortcut.key}
-              </Text>
+          {/* Viewer Help */}
+          <Box
+            borderStyle="round"
+            paddingX={2}
+            paddingY={1}
+            flexDirection="column"
+          >
+            <Text color="magenta" bold>
+              📄 Document Viewer
+            </Text>
+            <Box marginTop={1} flexDirection="column" rowGap={0}>
+              {viewerHelp.map((help, index) => (
+                <Box key={index} justifyContent="space-between">
+                  <Text color="yellow" bold>
+                    {help.key}
+                  </Text>
+                  <Text color="white">{help.action}</Text>
+                </Box>
+              ))}
             </Box>
-            <Text color="white">{shortcut.action}</Text>
           </Box>
-        ))}
-      </Box>
-
-      {/* About */}
-      <Box borderStyle="round" paddingX={2} paddingY={1} flexDirection="column">
-        <Box marginBottom={1}>
-          <Text color="white" bold>
-            📚 About docu-cli
-          </Text>
         </Box>
-
-        <Text color="gray">AI-powered offline documentation CLI tool</Text>
-
-        <Text color="gray">
-          Fetch, cache, and search developer docs from your terminal
-        </Text>
-
-        <Text color="gray">Created by @vasudevshetty</Text>
-
-        <Text color="blue">https://github.com/Vasudevshetty/docu</Text>
       </Box>
 
       {/* Footer */}
-      <Box marginTop={1}>
+      <Box marginTop={2} justifyContent="center">
         <Text color="gray" dimColor>
-          Press ESC or Q to return to Dashboard
+          Press ESC or q to return to dashboard • github.com/Vasudevshetty/docu
         </Text>
       </Box>
     </Box>

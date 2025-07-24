@@ -88,66 +88,50 @@ export function SearchScreen({
   });
 
   return (
-    <Box flexDirection="column" paddingX={2} paddingY={1}>
-      {/* Header */}
-      <Box marginBottom={1}>
-        <Text color="cyan" bold>
-          🔍 Search Documentation
-        </Text>
-      </Box>
+    <Box flexDirection="column" paddingX={3} paddingY={2}>
+      {/* Compact Header with Search Input */}
+      <Box marginBottom={2} flexDirection="column">
+        <Box justifyContent="space-between" marginBottom={1}>
+          <Text color="cyan" bold>
+            🔍 Search Documentation
+          </Text>
+          {isSearching && <Text color="yellow">⏳ Searching...</Text>}
+          {!isSearching && results.length > 0 && (
+            <Text color="green">{results.length} results</Text>
+          )}
+        </Box>
 
-      {/* Search Input */}
-      <Box
-        borderStyle="round"
-        paddingX={2}
-        paddingY={1}
-        marginBottom={1}
-        borderColor={inputFocused ? 'cyan' : 'gray'}
-      >
-        <Box>
-          <Text color="white">Query: </Text>
+        <Box
+          borderStyle="single"
+          paddingX={2}
+          paddingY={0}
+          borderColor={inputFocused ? 'cyan' : 'gray'}
+        >
+          <Text color="cyan">❯ </Text>
           <TextInput
             value={query}
             onChange={setQuery}
             onSubmit={performSearch}
-            placeholder="Enter search terms..."
+            placeholder="Search documentation..."
             focus={inputFocused}
           />
         </Box>
       </Box>
 
-      {/* Loading */}
-      {isSearching && (
-        <Box marginBottom={1}>
-          <Text color="yellow">Searching...</Text>
-        </Box>
-      )}
-
-      {/* Results */}
+      {/* Results Grid */}
       {results.length > 0 && (
-        <Box
-          borderStyle="round"
-          paddingX={2}
-          paddingY={1}
-          flexDirection="column"
-          flexGrow={1}
-        >
-          <Box marginBottom={1}>
-            <Text color="white" bold>
-              📖 Results ({results.length})
-            </Text>
-          </Box>
-
-          <Box flexDirection="column">
-            {results.slice(0, 10).map((result, index) => (
-              <Box
-                key={result.id}
-                marginBottom={1}
-                paddingX={1}
-                borderStyle={index === selectedIndex ? 'single' : undefined}
-                borderColor={index === selectedIndex ? 'cyan' : undefined}
-              >
-                <Box flexDirection="column">
+        <Box flexDirection="column" flexGrow={1}>
+          {results.slice(0, 12).map((result, index) => (
+            <Box
+              key={result.id}
+              paddingX={2}
+              paddingY={0}
+              borderStyle={index === selectedIndex ? 'single' : undefined}
+              borderColor={index === selectedIndex ? 'cyan' : undefined}
+              marginBottom={index === selectedIndex ? 0 : 0}
+            >
+              <Box width="100%" justifyContent="space-between">
+                <Box width="75%">
                   <Text
                     color={index === selectedIndex ? 'cyan' : 'white'}
                     bold={index === selectedIndex}
@@ -155,41 +139,55 @@ export function SearchScreen({
                     {index === selectedIndex ? '▶ ' : '  '}
                     {result.title}
                   </Text>
-                  <Text color="gray" dimColor>
-                    {result.docset} • Score: {result.score.toFixed(3)}
+                </Box>
+                <Box width="25%" justifyContent="flex-end">
+                  <Text color="blue" dimColor>
+                    {result.docset}
                   </Text>
-                  {result.snippet && (
-                    <Text color="gray">
-                      {result.snippet.length > 100
-                        ? result.snippet.substring(0, 100) + '...'
-                        : result.snippet}
-                    </Text>
-                  )}
+                  <Text color="gray" dimColor>
+                    {' '}
+                    • {result.score.toFixed(2)}
+                  </Text>
                 </Box>
               </Box>
-            ))}
-          </Box>
+              {index === selectedIndex && result.snippet && (
+                <Box marginTop={0} paddingLeft={3}>
+                  <Text color="gray">
+                    {result.snippet.length > 120
+                      ? result.snippet.substring(0, 120) + '...'
+                      : result.snippet}
+                  </Text>
+                </Box>
+              )}
+            </Box>
+          ))}
         </Box>
       )}
 
-      {/* No Results */}
+      {/* Empty State */}
       {!isSearching && query && results.length === 0 && (
-        <Box
-          borderStyle="round"
-          paddingX={2}
-          paddingY={1}
-          justifyContent="center"
-        >
-          <Text color="yellow">No results found for "{query}"</Text>
+        <Box justifyContent="center" marginY={4}>
+          <Text color="yellow">🔍 No results found for "{query}"</Text>
         </Box>
       )}
 
-      {/* Help */}
-      <Box marginTop={1}>
-        <Text color="gray" dimColor>
+      {/* Clean Status Line */}
+      <Box
+        marginTop={2}
+        justifyContent="space-between"
+        borderStyle="single"
+        borderColor="gray"
+        paddingX={2}
+      >
+        <Text color="gray">
           {inputFocused
-            ? 'Type your search and press Enter • ESC: Back'
-            : '↑↓: Navigate • Enter: View • /: New Search • ESC: Back to Search'}
+            ? 'Type search • Enter: Search • ESC: Back'
+            : '↑↓: Navigate • Enter: View • /: New Search • ESC: Back'}
+        </Text>
+        <Text color="gray">
+          {results.length > 0 &&
+            !inputFocused &&
+            `${selectedIndex + 1}/${results.length}`}
         </Text>
       </Box>
     </Box>

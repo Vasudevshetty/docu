@@ -80,16 +80,35 @@ export default function App() {
 
   if (showBanner) {
     return (
-      <Box flexDirection="column" alignItems="center" justifyContent="center">
-        <Text color="cyan">{Banner.getAsciiArt()}</Text>
-        <Text color="gray">Loading TUI...</Text>
+      <Box
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        height="100%"
+        paddingX={4}
+      >
+        <Box marginBottom={2} justifyContent="center">
+          <Text color="cyan" bold>
+            {Banner.getAsciiArt()}
+          </Text>
+        </Box>
+        <Box justifyContent="center" marginBottom={1}>
+          <Text color="cyan" bold>
+            Professional Documentation Browser
+          </Text>
+        </Box>
+        <Box justifyContent="center">
+          <Text color="yellow">⟳ </Text>
+          <Text color="white">Initializing TUI...</Text>
+        </Box>
       </Box>
     );
   }
 
   return (
     <Box flexDirection="column" height="100%">
-      <Box flexGrow={1}>
+      {/* Main content area */}
+      <Box flexGrow={1} height="100%">
         {state.currentScreen === 'dashboard' && (
           <MainDashboard onNavigate={navigateToScreen} />
         )}
@@ -116,6 +135,7 @@ export default function App() {
         )}
       </Box>
 
+      {/* Status bar at bottom */}
       <StatusBar
         currentScreen={state.currentScreen}
         isLoading={state.isLoading}
