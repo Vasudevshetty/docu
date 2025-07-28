@@ -13,12 +13,12 @@ export default {
           module: 'ESNext',
           moduleResolution: 'Node',
           target: 'ES2022',
-          verbatimModuleSyntax: true,
+          verbatimModuleSyntax: false,
         },
       },
     ],
   },
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],

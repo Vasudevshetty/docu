@@ -118,4 +118,8 @@ export class FileSystemAdapter {
   getIndexPath(docsetName: string): string {
     return path.join(this.docuDir, 'index', `${docsetName}.db`);
   }
+
+  getBookmarkIndexPath(): string {
+    return path.join(this.docuDir, 'index', 'bookmarks.db');
+  }
 }

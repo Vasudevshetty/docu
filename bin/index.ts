@@ -14,6 +14,7 @@ import { copyCommand } from '../src/cli/copy.js';
 import { updateCommand } from '../src/cli/update.js';
 import { setupCommand } from '../src/cli/setup.js';
 import { tuiCommand } from '../src/cli/tui.js';
+import { bookmarkCommand } from '../src/cli/bookmark.js';
 import { Banner } from '../src/utils/Banner.js';
 
 const program = new Command();
@@ -34,7 +35,7 @@ program
   .description(
     'Blazing-fast, offline-first CLI to fetch, cache, and search developer docs'
   )
-  .version('0.3.4');
+  .version('0.4.0');
 
 // Core commands
 program.addCommand(fetchCommand);
@@ -53,6 +54,9 @@ setupAvailableCommand(program);
 program.addCommand(explainCommand);
 program.addCommand(quickCommand);
 program.addCommand(copyCommand);
+
+// Bookmark management
+program.addCommand(bookmarkCommand);
 
 // Setup and configuration
 program.addCommand(setupCommand);

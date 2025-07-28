@@ -4,6 +4,7 @@ import { SearchDocs } from '../core/SearchDocs.js';
 import { MarkdownPager } from '../utils/MarkdownPager.js';
 import { GroqService } from '../services/GroqService.js';
 import { SmartFetch } from '../utils/SmartFetch.js';
+import { BookmarkService } from '../services/BookmarkService.js';
 import ora from 'ora';
 
 function generateMarkdownOutput(
@@ -102,6 +103,7 @@ export const searchCommand = new Command('search')
   .option('--ai', 'Enable AI-powered explanations and insights')
   .option('--pager', 'Display results in a paginated viewer')
   .option('--smart', 'Use smart fetch suggestions if no results found')
+  .option('--bookmark', 'Show option to bookmark results after search')
   .action(
     async (
       query: string,
@@ -114,6 +116,7 @@ export const searchCommand = new Command('search')
         ai?: boolean;
         pager?: boolean;
         smart?: boolean;
+        bookmark?: boolean;
       }
     ) => {
       try {
@@ -183,6 +186,25 @@ export const searchCommand = new Command('search')
           await pager.display();
         } else {
           console.log(output);
+        }
+
+        // Show bookmark option if enabled
+        if (options.bookmark && results.length > 0) {
+          console.log(chalk.cyan('\n💾 Bookmark results:'));
+          console.log(
+            chalk.gray(
+              'Use `docu bookmark add "' +
+                query +
+                '"` to bookmark the top result'
+            )
+          );
+          console.log(
+            chalk.gray(
+              'Use `docu bookmark add "' +
+                query +
+                '" --interactive` to choose from results'
+            )
+          );
         }
       } catch (error) {
         console.error(

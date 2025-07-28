@@ -39,7 +39,15 @@ echo "GROQ_API_KEY=your_api_key_here" > ~/.docu/.env
 - 🤖 **AI Explanations**: Get detailed explanations powered by Groq AI
 - 📖 **Smart Insights**: AI-enhanced search results with contextual guidance
 - 💡 **Quick Reference**: AI-generated syntax examples and best practices
-- � **Intelligent Context**: Search results enhanced with AI understanding
+- 🧠 **Intelligent Context**: Search results enhanced with AI understanding
+
+### Personal Knowledge Management 📚
+
+- 🔖 **Smart Bookmarking**: Save and organize your favorite documentation snippets
+- 🏷️ **Tagging System**: Categorize bookmarks with custom tags and categories
+- 📝 **Personal Notes**: Add your own notes and insights to bookmarked content
+- 🔍 **Bookmark Search**: Full-text search through your personal knowledge base
+- 📊 **Usage Analytics**: Track your learning patterns and frequently accessed content
 
 ### Display & UX
 
@@ -57,6 +65,7 @@ echo "GROQ_API_KEY=your_api_key_here" > ~/.docu/.env
 - 📦 **DevOps Integration**: Embed in containers and development environments
 - 🎓 **Learning Enhancement**: AI-powered explanations for complex concepts
 - 🔍 **Knowledge Base**: Personal offline documentation archive with smart search
+- 📚 **Learning Tracking**: Build and curate your personal development knowledge base
 
 ---
 
@@ -184,6 +193,34 @@ docu quick "array methods"
 docu quick "promises" --ai
 ```
 
+### Personal Bookmarks 🔖
+
+```bash
+# Add a bookmark from search results
+docu bookmark add "useState hook" --notes "Essential for React state management"
+
+# Add bookmark with tags and importance
+docu bookmark add "async await" --tags "javascript,async,es2017" --importance high
+
+# Interactive bookmark selection
+docu bookmark add "react patterns" --interactive
+
+# List all bookmarks
+docu bookmark list
+
+# Search through bookmarks
+docu bookmark search "state management"
+
+# Filter bookmarks by docset or tags
+docu bookmark list --docset react --tag hooks
+
+# View bookmark statistics
+docu bookmark stats
+
+# Remove a bookmark
+docu bookmark remove <bookmark-id>
+```
+
 ---
 
 ## �🧠 Implementation Plan
@@ -290,6 +327,18 @@ docu fetch react
 
 # Search offline docs
 docu search useEffect
+
+# Search with bookmark option
+docu search "react hooks" --bookmark
+
+# Add a bookmark
+docu bookmark add "useState" --notes "React state hook"
+
+# List bookmarks
+docu bookmark list
+
+# Search bookmarks
+docu bookmark search "react"
 
 # List available docsets
 docu list
