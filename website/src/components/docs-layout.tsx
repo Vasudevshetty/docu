@@ -8,8 +8,6 @@ import {
   FiMenu,
   FiX,
   FiTerminal,
-  FiChevronDown,
-  FiChevronRight,
   FiBook,
   FiStar,
   FiSettings,
@@ -17,6 +15,9 @@ import {
   FiTool,
   FiHeart,
   FiZap,
+  FiDownload,
+  FiCpu,
+  FiBookmark,
 } from 'react-icons/fi';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
@@ -24,13 +25,12 @@ import { cn } from '@/lib/utils';
 import metadata from '@/data/metadata.json';
 
 const iconMap = {
-  RocketLaunch: FiZap,
-  Star: FiStar,
-  Terminal: FiTerminal,
-  Cog: FiSettings,
-  Puzzle: FiPackage,
-  Wrench: FiTool,
-  Heart: FiHeart,
+  overview: FiBook,
+  installation: FiDownload,
+  commands: FiTerminal,
+  'ai-integration': FiCpu,
+  bookmarks: FiBookmark,
+  advanced: FiSettings,
 };
 
 interface DocsLayoutProps {
@@ -39,48 +39,29 @@ interface DocsLayoutProps {
 
 export function DocsLayout({ children }: DocsLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['getting-started'])
-  );
   const pathname = usePathname();
 
-  const toggleSection = (slug: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(slug)) {
-      newExpanded.delete(slug);
-    } else {
-      newExpanded.add(slug);
-    }
-    setExpandedSections(newExpanded);
-  };
-
   const isActive = (slug: string) => pathname === `/docs/${slug}`;
-  const isSectionActive = (section: any) => {
-    if (isActive(section.slug)) return true;
-    return section.sections?.some((subsection: any) =>
-      isActive(subsection.slug)
-    );
-  };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
+        <div className="container flex h-16 items-center">
           <Button
             variant="ghost"
             size="sm"
-            className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+            className="mr-4 px-2 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
             onClick={() => setSidebarOpen(true)}
           >
-            <FiMenu className="h-6 w-6" />
+            <FiMenu className="h-5 w-5" />
             <span className="sr-only">Toggle Menu</span>
           </Button>
 
-          <div className="mr-4 flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
+          <div className="mr-6 flex">
+            <Link href="/" className="flex items-center space-x-2">
               <FiTerminal className="h-6 w-6" />
-              <span className="font-bold">docu-cli</span>
+              <span className="text-xl font-bold">docu-cli</span>
             </Link>
           </div>
 
@@ -116,7 +97,7 @@ export function DocsLayout({ children }: DocsLayoutProps) {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="fixed left-0 top-0 z-50 h-full w-72 border-r bg-background p-6 shadow-lg"
+              className="fixed left-0 top-0 z-50 h-full w-72 border-r bg-background p-6 shadow-lg overflow-y-auto"
             >
               <div className="flex items-center justify-between">
                 <Link href="/" className="flex items-center space-x-2">
@@ -134,10 +115,7 @@ export function DocsLayout({ children }: DocsLayoutProps) {
               <div className="mt-6">
                 <Navigation
                   sections={metadata.navigation}
-                  expandedSections={expandedSections}
-                  toggleSection={toggleSection}
                   isActive={isActive}
-                  isSectionActive={isSectionActive}
                   onLinkClick={() => setSidebarOpen(false)}
                 />
               </div>
@@ -149,14 +127,8 @@ export function DocsLayout({ children }: DocsLayoutProps) {
       <div className="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
         {/* Desktop Sidebar */}
         <aside className="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block">
-          <div className="h-full py-6 pr-6 lg:py-8">
-            <Navigation
-              sections={metadata.navigation}
-              expandedSections={expandedSections}
-              toggleSection={toggleSection}
-              isActive={isActive}
-              isSectionActive={isSectionActive}
-            />
+          <div className="h-full py-6 pr-6 lg:py-8 overflow-y-auto">
+            <Navigation sections={metadata.navigation} isActive={isActive} />
           </div>
         </aside>
 
@@ -179,105 +151,44 @@ export function DocsLayout({ children }: DocsLayoutProps) {
   );
 }
 
-interface NavigationProps {
-  sections: any[];
-  expandedSections: Set<string>;
-  toggleSection: (slug: string) => void;
-  isActive: (slug: string) => boolean;
-  isSectionActive: (section: any) => boolean;
-  onLinkClick?: () => void;
-}
-
 function Navigation({
   sections,
-  expandedSections,
-  toggleSection,
   isActive,
-  isSectionActive,
   onLinkClick,
-}: NavigationProps) {
+}: {
+  sections: any[];
+  isActive: (slug: string) => boolean;
+  onLinkClick?: () => void;
+}) {
   return (
-    <nav className="space-y-2">
+    <nav className="space-y-1">
       {sections.map((section) => {
-        const Icon = iconMap[section.icon as keyof typeof iconMap] || FiBook;
-        const isExpanded = expandedSections.has(section.slug);
-        const hasSubsections = section.sections && section.sections.length > 0;
+        const Icon = iconMap[section.slug as keyof typeof iconMap] || FiBook;
 
         return (
-          <div key={section.slug}>
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  'flex w-full justify-start px-2 py-1.5 text-sm font-medium',
-                  isSectionActive(section)
-                    ? 'bg-muted text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
-                asChild={!hasSubsections}
-                onClick={
-                  hasSubsections
-                    ? () => toggleSection(section.slug)
-                    : onLinkClick
-                }
-              >
-                {hasSubsections ? (
-                  <div className="flex w-full items-center">
-                    <Icon className="mr-2 h-4 w-4" />
-                    <span className="flex-1">{section.title}</span>
-                    {isExpanded ? (
-                      <FiChevronDown className="h-4 w-4" />
-                    ) : (
-                      <FiChevronRight className="h-4 w-4" />
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    href={`/docs/${section.slug}`}
-                    className="flex w-full items-center"
-                  >
-                    <Icon className="mr-2 h-4 w-4" />
-                    <span>{section.title}</span>
-                  </Link>
-                )}
-              </Button>
-            </div>
-
-            <AnimatePresence>
-              {hasSubsections && isExpanded && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
-                >
-                  <div className="ml-6 mt-1 space-y-1">
-                    {section.sections.map((subsection: any) => (
-                      <Button
-                        key={subsection.slug}
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          'w-full justify-start px-2 py-1 text-sm',
-                          isActive(subsection.slug)
-                            ? 'bg-muted text-foreground'
-                            : 'text-muted-foreground hover:text-foreground'
-                        )}
-                        asChild
-                        onClick={onLinkClick}
-                      >
-                        <Link href={`/docs/${subsection.slug}`}>
-                          {subsection.title}
-                        </Link>
-                      </Button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <Button
+            key={section.slug}
+            variant="ghost"
+            size="sm"
+            className={cn(
+              'flex w-full justify-start px-3 py-2.5 text-sm font-medium transition-colors',
+              isActive(section.slug)
+                ? 'bg-accent text-accent-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+            )}
+            asChild
+            onClick={onLinkClick}
+          >
+            <Link
+              href={`/docs/${section.slug}`}
+              className="flex w-full items-center"
+            >
+              <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
+              <div className="flex-1 text-left">
+                <div className="font-medium">{section.title}</div>
+              </div>
+            </Link>
+          </Button>
         );
       })}
     </nav>

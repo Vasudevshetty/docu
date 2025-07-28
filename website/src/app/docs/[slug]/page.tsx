@@ -21,12 +21,11 @@ export default async function DocsSlugPage({ params }: DocsPageProps) {
 export async function generateStaticParams() {
   // Generate static paths for all documentation pages
   return [
-    { slug: 'getting-started' },
-    { slug: 'cli-commands' },
-    { slug: 'core-features' },
-    { slug: 'advanced-usage' },
-    { slug: 'integration-guide' },
-    { slug: 'troubleshooting' },
-    { slug: 'contributing' },
+    { slug: 'overview' },
+    { slug: 'installation' },
+    { slug: 'commands' },
+    { slug: 'ai-integration' },
+    { slug: 'bookmarks' },
+    { slug: 'advanced' },
   ];
 }

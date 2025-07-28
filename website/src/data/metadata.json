@@ -1,211 +1,72 @@
 {
   "title": "docu-cli Documentation",
-  "description": "Complete guide to using docu-cli for offline documentation management",
+  "description": "Complete guide to docu-cli: AI-powered offline documentation management",
   "version": "0.4.0",
   "lastUpdated": "2025-07-28",
   "navigation": [
     {
-      "title": "Getting Started",
-      "slug": "getting-started",
+      "title": "Introduction",
+      "slug": "overview",
       "icon": "RocketLaunch",
-      "sections": [
-        {
-          "title": "Introduction",
-          "slug": "introduction"
-        },
-        {
-          "title": "Installation",
-          "slug": "installation"
-        },
-        {
-          "title": "Quick Start",
-          "slug": "quick-start"
-        },
-        {
-          "title": "Configuration",
-          "slug": "configuration"
-        }
-      ]
+      "description": "Overview of docu-cli features and capabilities"
     },
     {
-      "title": "Core Features",
-      "slug": "core-features",
-      "icon": "Star",
-      "sections": [
-        {
-          "title": "Documentation Management",
-          "slug": "documentation-management"
-        },
-        {
-          "title": "AI-Enhanced Search",
-          "slug": "ai-enhanced-search"
-        },
-        {
-          "title": "Smart Bookmarking",
-          "slug": "smart-bookmarking"
-        },
-        {
-          "title": "Terminal Interface",
-          "slug": "terminal-interface"
-        }
-      ]
-    },
-    {
-      "title": "CLI Commands",
-      "slug": "cli-commands",
-      "icon": "Terminal",
-      "sections": [
-        {
-          "title": "Search Commands",
-          "slug": "search-commands"
-        },
-        {
-          "title": "Fetch Commands",
-          "slug": "fetch-commands"
-        },
-        {
-          "title": "Bookmark Commands",
-          "slug": "bookmark-commands"
-        },
-        {
-          "title": "Management Commands",
-          "slug": "management-commands"
-        },
-        {
-          "title": "AI Commands",
-          "slug": "ai-commands"
-        }
-      ]
-    },
-    {
-      "title": "Advanced Usage",
-      "slug": "advanced-usage",
-      "icon": "Cog",
-      "sections": [
-        {
-          "title": "Configuration Options",
-          "slug": "configuration-options"
-        },
-        {
-          "title": "Custom Docsets",
-          "slug": "custom-docsets"
-        },
-        {
-          "title": "Scripting & Automation",
-          "slug": "scripting-automation"
-        },
-        {
-          "title": "Performance Tuning",
-          "slug": "performance-tuning"
-        }
-      ]
-    },
-    {
-      "title": "Integration Guide",
-      "slug": "integration-guide",
+      "title": "Getting Started",
+      "slug": "installation",
       "icon": "Puzzle",
-      "sections": [
-        {
-          "title": "IDE Integration",
-          "slug": "ide-integration"
-        },
-        {
-          "title": "Team Workflows",
-          "slug": "team-workflows"
-        },
-        {
-          "title": "CI/CD Integration",
-          "slug": "cicd-integration"
-        },
-        {
-          "title": "API Usage",
-          "slug": "api-usage"
-        }
-      ]
+      "description": "Installation and setup guide"
     },
     {
-      "title": "Troubleshooting",
-      "slug": "troubleshooting",
-      "icon": "Wrench",
-      "sections": [
-        {
-          "title": "Common Issues",
-          "slug": "common-issues"
-        },
-        {
-          "title": "Performance Issues",
-          "slug": "performance-issues"
-        },
-        {
-          "title": "Configuration Problems",
-          "slug": "configuration-problems"
-        },
-        {
-          "title": "Getting Help",
-          "slug": "getting-help"
-        }
-      ]
+      "title": "Core Commands",
+      "slug": "commands",
+      "icon": "Terminal",
+      "description": "Complete command reference and examples"
     },
     {
-      "title": "Contributing",
-      "slug": "contributing",
+      "title": "AI Integration",
+      "slug": "ai-integration",
+      "icon": "Star",
+      "description": "Leverage AI for smarter documentation access"
+    },
+    {
+      "title": "Bookmark System",
+      "slug": "bookmarks",
       "icon": "Heart",
-      "sections": [
-        {
-          "title": "Development Setup",
-          "slug": "development-setup"
-        },
-        {
-          "title": "Contributing Guidelines",
-          "slug": "contributing-guidelines"
-        },
-        {
-          "title": "Code Architecture",
-          "slug": "code-architecture"
-        },
-        {
-          "title": "Release Process",
-          "slug": "release-process"
-        }
-      ]
+      "description": "Personal knowledge management and organization"
+    },
+    {
+      "title": "Advanced Features",
+      "slug": "advanced",
+      "icon": "Cog",
+      "description": "Advanced features and customization options"
     }
   ],
   "features": [
     {
-      "title": "Offline-First Documentation",
-      "description": "Complete documentation libraries cached locally for instant access",
-      "icon": "CloudOff"
+      "title": "Offline-First",
+      "description": "Access documentation without internet connection",
+      "icon": "⚡"
     },
     {
-      "title": "AI-Powered Search",
-      "description": "Intelligent search with contextual explanations and insights",
-      "icon": "Brain"
+      "title": "AI-Powered",
+      "description": "Intelligent explanations and contextual insights",
+      "icon": "🤖"
     },
     {
       "title": "Smart Bookmarking",
-      "description": "Personal knowledge management with advanced organization",
-      "icon": "Bookmark"
+      "description": "Build your personal knowledge base",
+      "icon": "🔖"
     },
     {
-      "title": "Terminal Integration",
-      "description": "Seamless integration with your development workflow",
-      "icon": "Terminal"
-    },
-    {
-      "title": "Multiple Interfaces",
-      "description": "CLI, TUI, and interactive modes for different use cases",
-      "icon": "Layout"
-    },
-    {
-      "title": "Performance Optimized",
-      "description": "Sub-second search across massive documentation collections",
-      "icon": "Lightning"
+      "title": "Lightning Fast",
+      "description": "Sub-second search across massive documentation",
+      "icon": "🚀"
     }
   ],
   "stats": {
-    "totalCommands": 15,
-    "supportedDocsets": 25,
-    "averageSearchTime": "< 50ms",
-    "cacheSize": "~50MB per docset"
+    "supportedDocsets": 10,
+    "searchSpeed": "Sub-second",
+    "platforms": "Cross-platform",
+    "architecture": "Clean Architecture"
   }
 }
